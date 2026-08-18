@@ -1,8 +1,7 @@
 # Data sources
 
 This document identifies the authoritative sources for the observations,
-drivers, empirical references, and comparison products used by AETHER-P3
-Nowcast.
+drivers, empirical references, and auxiliary data used by AETHER-P3 Nowcast.
 
 ## Neutral-density observations
 
@@ -34,8 +33,8 @@ web browser.
 
 | component | role | authoritative source |
 |---|---|---|
-| JB2008 | current-location empirical density input and comparison model | [SET JB2008 indices and model resources](https://sol.spacenvironment.net/JB2008/indices.html) |
-| NRLMSISE-00 | current-location empirical density input and comparison model | [NASA CCMC NRLMSISE-00 description](https://ccmc.gsfc.nasa.gov/models/NRLMSIS~00/) |
+| JB2008 | current-location empirical density input | [SET JB2008 indices and model resources](https://sol.spacenvironment.net/JB2008/indices.html) |
+| NRLMSISE-00 | current-location empirical density input | [NASA CCMC NRLMSISE-00 description](https://ccmc.gsfc.nasa.gov/models/NRLMSIS~00/) |
 | Orekit data | Earth orientation, time scales, and reference-frame support | [Official Orekit 13.1.4 downloads and data instructions](https://www.orekit.org/site-orekit-13.1.4/downloads.html) |
 
 JB2008 and NRLMSISE-00 densities are evaluated locally through Orekit; they are
@@ -80,13 +79,3 @@ publications as well as the exact Orekit software release:
   scientific issues*, https://doi.org/10.1029/2002JA009430.
 - Orekit 13.1.4, https://doi.org/10.5281/zenodo.7249096, with the deployed
   version recorded explicitly.
-
-## Comparison products
-
-| product | use | authoritative access |
-|---|---|---|
-| HASDM | independent density baseline | [SET HASDM database](https://spacewx.com/hasdm/) and its linked data-access service |
-| WAM-IPE | independent operational nowcast baseline | [NOAA SWPC WAM-IPE product page](https://www.swpc.noaa.gov/products/wam-ipe) and [NCEP WFS NetCDF inventory](https://www.nco.ncep.noaa.gov/pmb/products/wfs/) |
-
-Comparison products never enter the AETHER-P3 Nowcast feature vector or
-training target.
