@@ -1,5 +1,18 @@
 # Installation
 
+## One-command reference installation
+
+On Linux with Conda available, the recommended first run is:
+
+```bash
+./scripts/run_example.sh
+```
+
+This creates the declared environment when necessary, installs the package,
+runs the frozen model with the committed preprocessed input fixture, and
+verifies the resulting NetCDF against the reference output. The Java feature
+generator and production driver archive are not required for this small test.
+
 ## System requirements
 
 - Linux x86-64;

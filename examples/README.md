@@ -1,8 +1,19 @@
 # Reference example
 
-`input/small_grid.json` is a minimal executable grid request. It produces eight
-grid points at one UTC time while using the same model and driver pipeline as
-the production grid:
+`input/preprocessed_example.npz` contains eight fully assembled 342-dimensional
+model-input records at one UTC. It contains no original AE or solar-wind source
+records. From the repository root, the recommended frozen-inference test is:
+
+```bash
+./scripts/run_example.sh
+```
+
+This command installs the declared environment when necessary, performs
+inference, and verifies the result against the committed reference NetCDF.
+
+`input/small_grid.json` remains a minimal request for testing the complete
+production feature-generation path after the full driver archive has been
+installed:
 
 ```bash
 aether-p3-nowcast grid \
@@ -13,8 +24,8 @@ aether-p3-nowcast grid \
   --workers 2
 ```
 
-The committed reference NetCDF is stored in `examples/output`; the command
-writes a new copy under `output/example` because existing files are never
-overwritten. The production grid remains defined by `config/production.json`.
-Output variables and units are documented in
+The committed reference NetCDF is stored in `examples/output`; the one-command
+test writes a new copy under a unique directory below `output/` because
+existing files are never overwritten. The production grid remains defined by
+`config/production.json`. Output variables and units are documented in
 [`docs/OUTPUT_NETCDF.md`](../docs/OUTPUT_NETCDF.md).

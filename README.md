@@ -39,6 +39,31 @@ The native global product has:
 - NetCDF4 output containing density, predictive intervals, uncertainty
   components, and the four distribution parameters.
 
+## One-command example
+
+On Linux with Conda installed, a clean checkout can install the declared
+environment, run the frozen model, and verify a reference NetCDF using one
+command:
+
+```bash
+./scripts/run_example.sh
+```
+
+The first run creates the `aether-p3-nowcast` Conda environment and may take
+several minutes while dependencies are installed. A successful end-to-end run
+finishes with:
+
+```text
+AETHER-P3 example: PASS
+Output: .../aether_p3_nowcast_20240528T120000Z.nc
+```
+
+The example evaluates eight grid points using the release model weights,
+training normalization, and a committed array of 342-dimensional preprocessed
+model inputs. No third-party source records are redistributed with this test.
+The production `grid` command separately constructs the same input contract
+from the complete operational driver archive.
+
 ## Scientific attribution
 
 The uncertainty formulation, empirical density inputs, and orbital-environment
@@ -63,7 +88,7 @@ Authoritative sources for the satellite density observations and operational
 space-weather drivers are listed in
 [`docs/DATA_SOURCES.md`](docs/DATA_SOURCES.md).
 
-## Installation
+## Manual installation
 
 AETHER-P3 Nowcast requires Python 3.11 or 3.12, Java 17 or newer, and Maven
 3.8 or newer. Create the supplied environment, install the Python package, and
@@ -79,10 +104,11 @@ mvn -q test package
 cd ..
 ```
 
-The repository includes the model weights, normalization, Orekit auxiliary
-data, and space-weather files that are below GitHub's individual-file limit.
-Two required high-resolution files are too large for ordinary GitHub storage
-and must be placed manually under `data/space-weather`:
+Manual installation and production use require the complete runtime driver
+archive. The repository includes the model weights, normalization, Orekit
+auxiliary data, and space-weather files that are below GitHub's individual-file
+limit. Two high-resolution files are too large for ordinary GitHub storage and
+must be placed under `data/space-weather`:
 
 ```text
 AE.csv
@@ -94,7 +120,7 @@ Their authoritative sources and expected roles are documented in
 latencies are listed in
 [`docs/INPUTS_AND_LATENCY.md`](docs/INPUTS_AND_LATENCY.md).
 
-## Verify the installation
+## Additional checks
 
 Run the Python and Java checks:
 
@@ -124,9 +150,9 @@ The requested UTC must lie on a five-minute boundary. The production grid uses
 2-degree latitude spacing, 4-degree longitude spacing, and altitudes from 230
 to 530 km at 10 km spacing. Existing NetCDF files are never overwritten.
 
-A small input configuration and its reference output are provided under
-`examples/`. Additional installation, input, output, and validation details
-are available in `docs/`.
+A preprocessed input fixture, a small production-path configuration, and a
+reference output are provided under `examples/`. Additional installation,
+input, output, and validation details are available in `docs/`.
 
 ## Train from a prepared dataset
 
