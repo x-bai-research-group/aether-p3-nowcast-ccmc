@@ -20,6 +20,9 @@ AE.csv
 solarwind.csv
 ```
 
+The one-command reference test uses an already assembled model-input fixture
+and therefore does not redistribute excerpts of these source products.
+
 Orekit runtime data are included under `data/orekit-data/`. Required products,
 causality rules, filenames, and authoritative sources are documented in
 [`docs/INPUTS_AND_LATENCY.md`](../docs/INPUTS_AND_LATENCY.md) and
