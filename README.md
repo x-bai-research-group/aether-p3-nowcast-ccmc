@@ -23,7 +23,7 @@ states.
 
 One model call jointly returns four normal-inverse-gamma parameters:
 
-(γ, ν, α, β).
+**(γ, ν, α, β)**
 
 Here, γ is the normalized mean log-density prediction. The remaining
 parameters define the predictive Student-t distribution used to obtain density
@@ -35,7 +35,7 @@ The native global product has:
 - five-minute temporal cadence;
 - 2-degree latitude spacing;
 - 4-degree longitude spacing;
-- 230--530 km altitude coverage at 10 km spacing;
+- 230–530 km altitude coverage at 10 km spacing;
 - NetCDF4 output containing density, predictive intervals, uncertainty
   components, and the four distribution parameters.
 
@@ -72,7 +72,7 @@ build the Java feature generator:
 ```bash
 conda env create -f environment.yml
 conda activate aether-p3-nowcast
-python -m pip install -e .
+python -m pip install -e '.[test]'
 
 cd feature_generator
 mvn -q test package
