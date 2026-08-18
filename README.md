@@ -23,11 +23,9 @@ states.
 
 One model call jointly returns four normal-inverse-gamma parameters:
 
-\[
-(\gamma,\nu,\alpha,\beta).
-\]
+(γ, ν, α, β).
 
-Here, \(\gamma\) is the normalized mean log-density prediction. The remaining
+Here, γ is the normalized mean log-density prediction. The remaining
 parameters define the predictive Student-t distribution used to obtain density
 intervals and separate aleatoric and epistemic uncertainty estimates. No
 post-hoc calibration scale is applied.
