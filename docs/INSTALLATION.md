@@ -39,11 +39,12 @@ feature_generator/target/aether-p3-feature-generator-1.0.0.jar
 
 ## External data
 
-Place the required space-weather files under `data/space-weather` and the
-Orekit auxiliary data under `data/orekit-data`. Both locations are declared in
-`config/production.json`. The required products and authoritative sources are
-listed in [`DATA_SOURCES.md`](DATA_SOURCES.md). Run `scripts/run_checks.sh`
-after installation.
+The repository includes Orekit auxiliary data and the space-weather files that
+fit ordinary GitHub storage. Add the two larger required files, `AE.csv` and
+`solarwind.csv`, under `data/space-weather`. Both runtime locations are
+declared in `config/production.json`. Product definitions and authoritative
+sources are listed in [`DATA_SOURCES.md`](DATA_SOURCES.md). Run
+`scripts/run_checks.sh` after installation.
 
 ## Runtime verification
 

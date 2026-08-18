@@ -38,3 +38,81 @@ The native global product has:
 - 230--530 km altitude coverage at 10 km spacing;
 - NetCDF4 output containing density, predictive intervals, uncertainty
   components, and the four distribution parameters.
+
+## Installation
+
+AETHER-P3 Nowcast requires Python 3.11 or 3.12, Java 17 or newer, and Maven
+3.8 or newer. Create the supplied environment, install the Python package, and
+build the Java feature generator:
+
+```bash
+conda env create -f environment.yml
+conda activate aether-p3-nowcast
+python -m pip install -e .
+
+cd feature_generator
+mvn -q test package
+cd ..
+```
+
+The repository includes the model weights, normalization, Orekit auxiliary
+data, and space-weather files that are below GitHub's individual-file limit.
+Two required high-resolution files are too large for ordinary GitHub storage
+and must be placed manually under `data/space-weather`:
+
+```text
+AE.csv
+solarwind.csv
+```
+
+Their authoritative sources and expected roles are documented in
+[`docs/DATA_SOURCES.md`](docs/DATA_SOURCES.md). The exact filenames and causal
+latencies are listed in
+[`docs/INPUTS_AND_LATENCY.md`](docs/INPUTS_AND_LATENCY.md).
+
+## Verify the installation
+
+Run the Python and Java checks:
+
+```bash
+scripts/run_checks.sh
+```
+
+Display the complete 342-input contract:
+
+```bash
+aether-p3-nowcast contract
+```
+
+## Generate a global nowcast
+
+The following command generates one three-dimensional NetCDF field at the
+requested UTC:
+
+```bash
+aether-p3-nowcast grid \
+  --config config/production.json \
+  --utc 2024-05-11T12:00:00Z \
+  --output-dir output
+```
+
+The requested UTC must lie on a five-minute boundary. The production grid uses
+2-degree latitude spacing, 4-degree longitude spacing, and altitudes from 230
+to 530 km at 10 km spacing. Existing NetCDF files are never overwritten.
+
+A small input configuration and its reference output are provided under
+`examples/`. Additional installation, input, output, and validation details
+are available in `docs/`.
+
+## Train from a prepared dataset
+
+Training data are not distributed with this repository. A compatible prepared
+dataset can be checked and used as follows:
+
+```bash
+aether-p3-nowcast check --dataset-root /path/to/training_dataset
+scripts/run_training.sh /path/to/training_dataset runs/training
+```
+
+The default `config/seeds.json` trains seed 20. The same interface accepts a
+list of seeds when independent training runs are required.

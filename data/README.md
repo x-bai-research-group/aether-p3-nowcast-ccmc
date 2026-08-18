@@ -1,16 +1,29 @@
 # Runtime data
 
-Place the required space-weather drivers under:
+The repository includes the following runtime drivers under
+`data/space-weather`:
 
 ```text
-data/space-weather/
+Apo30.csv
+DST.csv
+DTCFILE.TXT
+SOLFSMY.TXT
+SW-All.txt
+radio_flux_adjusted.txt
 ```
 
-Orekit runtime data are expected under `data/orekit-data/`. The required
-products, causality rules, and file names are listed in
-[`docs/INPUTS_AND_LATENCY.md`](../docs/INPUTS_AND_LATENCY.md).
+Two required files exceed GitHub's individual-file limit and must be supplied
+locally in the same directory:
 
-The space-weather and Orekit directories are excluded from version control
-because their upstream access and redistribution terms are independent of the
-model source code. Authoritative sources and product roles are documented in
+```text
+AE.csv
+solarwind.csv
+```
+
+Orekit runtime data are included under `data/orekit-data/`. Required products,
+causality rules, filenames, and authoritative sources are documented in
+[`docs/INPUTS_AND_LATENCY.md`](../docs/INPUTS_AND_LATENCY.md) and
 [`docs/DATA_SOURCES.md`](../docs/DATA_SOURCES.md).
+
+Before any public redistribution, confirm the applicable upstream terms for
+all third-party data products.

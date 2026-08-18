@@ -9,5 +9,6 @@ feature_generator/target/
 /runs/
 /output/
 *.tmp
-data/space-weather/
-data/orekit-data/
+data/space-weather/AE.csv
+data/space-weather/solarwind.csv
+data/orekit-data/.git/
