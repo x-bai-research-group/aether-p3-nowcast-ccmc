@@ -39,6 +39,30 @@ The native global product has:
 - NetCDF4 output containing density, predictive intervals, uncertainty
   components, and the four distribution parameters.
 
+## Scientific attribution
+
+The uncertainty formulation, empirical density inputs, and orbital-environment
+calculations build on the following work:
+
+- Amini, A., Schwarting, W., Soleimany, A., and Rus, D. (2020),
+  [*Deep Evidential Regression*](https://proceedings.neurips.cc/paper/2020/hash/aab085461de182608ee9f607f3f7d18f-Abstract.html),
+  Advances in Neural Information Processing Systems 33.
+- Bowman, B. R., et al. (2008),
+  [*A New Empirical Thermospheric Density Model JB2008 Using New Solar and
+  Geomagnetic Indices*](https://doi.org/10.2514/6.2008-6438), AIAA 2008-6438.
+- Picone, J. M., Hedin, A. E., Drob, D. P., and Aikin, A. C. (2002),
+  [*NRLMSISE-00 empirical model of the atmosphere: Statistical comparisons and
+  scientific issues*](https://doi.org/10.1029/2002JA009430), Journal of
+  Geophysical Research: Space Physics, 107(A12).
+- Orekit Team,
+  [Orekit 13.1.4](https://www.orekit.org/site-orekit-13.1.4/downloads.html),
+  used for time scales, reference frames, Sun position, and the local JB2008
+  and NRLMSISE-00 evaluations.
+
+Authoritative sources for the satellite density observations and operational
+space-weather drivers are listed in
+[`docs/DATA_SOURCES.md`](docs/DATA_SOURCES.md).
+
 ## Installation
 
 AETHER-P3 Nowcast requires Python 3.11 or 3.12, Java 17 or newer, and Maven
