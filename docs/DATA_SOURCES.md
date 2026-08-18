@@ -77,5 +77,6 @@ publications as well as the exact Orekit software release:
 - Picone, J. M., Hedin, A. E., Drob, D. P., and Aikin, A. C. (2002),
   *NRLMSISE-00 empirical model of the atmosphere: Statistical comparisons and
   scientific issues*, https://doi.org/10.1029/2002JA009430.
-- Orekit 13.1.4, https://doi.org/10.5281/zenodo.7249096, with the deployed
+- Orekit 13.1.4,
+  https://www.orekit.org/site-orekit-13.1.4/downloads.html, with the deployed
   version recorded explicitly.

@@ -10,6 +10,6 @@ Before proposing a change, run:
 scripts/run_checks.sh
 ```
 
-Do not commit training data, third-party space-weather archives, Orekit data,
-model weights, or generated NetCDF files without explicit redistribution
+Adding or replacing training data, bundled third-party data, model weights, or
+reference NetCDF files requires explicit scientific and redistribution
 approval.
