@@ -1,0 +1,28 @@
+{
+  "model_name": "AETHER-P3 Nowcast",
+  "model_version": "1.0.0-rc1",
+  "feature_contract": "aether-p3-nowcast-342-v1",
+  "feature_count": 342,
+  "parameter_count": 328116,
+  "selected_seed": 20,
+  "selected_epoch": 117,
+  "selected_validation_edl_loss": -1.0528661310642342,
+  "selection_used_formal_tests": false,
+  "network": {
+    "routing_history_width": 72,
+    "routing_short_width": 36,
+    "short_width": 64,
+    "long_width": 48,
+    "solar_width": 32,
+    "context_width": 64,
+    "empirical_width": 32,
+    "fusion_width": 192,
+    "bottleneck_width": 128,
+    "uncertainty_width": 64,
+    "query_location_width": 32,
+    "query_time_width": 32,
+    "dropout": 0.05,
+    "l2": 0.0
+  },
+  "output": ["gamma", "nu", "alpha", "beta"]
+}

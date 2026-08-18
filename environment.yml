@@ -1,0 +1,14 @@
+name: aether-p3-nowcast
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - numpy=2.0
+  - scipy>=1.14,<1.17
+  - h5py>=3.11,<4
+  - netcdf4>=1.7,<2
+  - openjdk=17
+  - maven>=3.8
+  - pip
+  - pip:
+      - tensorflow>=2.18,<2.21

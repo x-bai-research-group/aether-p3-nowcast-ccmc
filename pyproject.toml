@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=75", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aether-p3-nowcast"
+version = "1.0.0rc1"
+description = "Global thermospheric density nowcasting with predictive uncertainty"
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+license = {text = "License pending institutional review"}
+authors = [{name = "AETHER-P3 Nowcast developers"}]
+dependencies = [
+  "numpy>=2.0,<2.1",
+  "scipy>=1.14,<1.17",
+  "tensorflow>=2.18,<2.21",
+  "h5py>=3.11,<4",
+  "netCDF4>=1.7,<2",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8,<9"]
+
+[project.scripts]
+aether-p3-nowcast = "aether_p3_nowcast.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

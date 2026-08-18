@@ -1,0 +1,16 @@
+{
+  "model_name": "AETHER-P3 Nowcast",
+  "model_version": "1.0.0-rc1",
+  "feature_contract": "aether-p3-nowcast-342-v1",
+  "bundle_root": "../..",
+  "space_weather_root": "data/space-weather",
+  "orekit_root": "data/orekit-data",
+  "feature_generator_jar": "feature_generator/target/aether-p3-feature-generator-1.0.0.jar",
+  "model_root": "model",
+  "grid": {
+    "latitude": [-1.0, 1.0, 2.0],
+    "longitude": [-2.0, 2.0, 4.0],
+    "altitude_km": [300.0, 310.0, 10.0]
+  },
+  "cadence_seconds": 300
+}

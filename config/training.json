@@ -1,0 +1,30 @@
+{
+  "max_epochs": 300,
+  "batch_size": 4096,
+  "learning_rate": 5e-05,
+  "minimum_learning_rate": 1e-07,
+  "lr_reduction_factor": 0.5,
+  "lr_patience": 7,
+  "early_stopping_patience": 15,
+  "minimum_delta": 0.0001,
+  "weight_decay": 1e-05,
+  "clipnorm": 1.0,
+  "edl_coefficient": 0.0001,
+  "mixed_precision": true,
+  "network": {
+    "routing_history_width": 72,
+    "routing_short_width": 36,
+    "short_width": 64,
+    "long_width": 48,
+    "solar_width": 32,
+    "context_width": 64,
+    "empirical_width": 32,
+    "fusion_width": 192,
+    "bottleneck_width": 128,
+    "uncertainty_width": 64,
+    "query_location_width": 32,
+    "query_time_width": 32,
+    "dropout": 0.05,
+    "l2": 0.0
+  }
+}
