@@ -26,6 +26,21 @@ A GPU is not required for inference. At least 16 GB system RAM is recommended
 for complete global-field generation. On the tested Intel Core Ultra 9 285K
 CPU, a 251,100-point field required approximately 103 seconds end to end.
 
+To measure the neural-network component on the installation hardware, run the
+same frozen-input benchmark once with the GPU hidden and once with GPU 0:
+
+```bash
+CUDA_VISIBLE_DEVICES=-1 python scripts/benchmark_model_inference.py \
+  --output benchmark_cpu.json
+CUDA_VISIBLE_DEVICES=0 python scripts/benchmark_model_inference.py \
+  --output benchmark_gpu.json
+```
+
+The benchmark reports warm single-point latency and batched inference for the
+251,100 points in the standard grid. It excludes Java feature construction,
+the two empirical-model calculations, and NetCDF writing; those steps remain
+part of the separately reported end-to-end field time.
+
 ## Python environment
 
 ```bash

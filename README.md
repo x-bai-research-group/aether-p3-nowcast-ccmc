@@ -175,6 +175,8 @@ approximately 0.4 seconds on the tested CPU. One standard 31 × 90 × 90 field
 (251,100 points) required approximately 103 seconds end to end, including driver
 feature generation, JB2008 and NRLMSISE-00 evaluation, neural-network
 inference, and NetCDF writing. Hardware and driver I/O can change this time.
+Reproducible CPU/GPU benchmark commands are provided in
+[`docs/INSTALLATION.md`](docs/INSTALLATION.md#system-requirements).
 
 ## Additional checks
 
