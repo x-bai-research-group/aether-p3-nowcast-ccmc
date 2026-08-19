@@ -1,0 +1,58 @@
+{
+  "date": "2026-08-19",
+  "model_version": "1.0.0",
+  "checkpoint_sha256": "eecc45f27e5fc40d80f74f1b2cc2c803f5c6d7dc6174ee17ae4225ffddec8a04",
+  "hardware": {
+    "cpu": "Intel Core Ultra 9 285K",
+    "gpu": "NVIDIA GeForce RTX 5090",
+    "system_memory_gb": 64,
+    "operating_system": "Ubuntu 24.04 x86-64",
+    "kernel": "6.11.0-29-generic"
+  },
+  "software": {
+    "python": "3.12.11",
+    "tensorflow": "2.20.0-dev0+selfbuilt",
+    "cuda_visible_gpu_count": 1,
+    "cudnn": "9.10.1"
+  },
+  "protocol": {
+    "points": 251100,
+    "grid_shape": [31, 90, 90],
+    "batch_size": 4096,
+    "model_repeats": 3,
+    "reported_model_statistic": "median",
+    "production_utc": "2024-05-11T12:00:00Z"
+  },
+  "model_and_physical_conversion": {
+    "cpu": {
+      "single_point_warm_median_seconds": 0.3930051369825378,
+      "field_median_seconds": 84.40784618095495,
+      "points_per_second": 2974.8419295249832
+    },
+    "gpu": {
+      "single_point_warm_median_seconds": 0.0752168329199776,
+      "field_median_seconds": 7.313777360832319,
+      "points_per_second": 34332.46428100519
+    },
+    "gpu_field_speedup": 11.541
+  },
+  "complete_production_field": {
+    "includes": [
+      "driver feature generation",
+      "JB2008 evaluation",
+      "NRLMSISE-00 evaluation",
+      "neural-network inference",
+      "physical uncertainty conversion",
+      "NetCDF writing"
+    ],
+    "cpu": {
+      "elapsed_seconds": 102.46,
+      "peak_host_memory_kb": 2159904
+    },
+    "gpu": {
+      "elapsed_seconds": 26.83,
+      "peak_host_memory_kb": 2961380
+    },
+    "gpu_speedup": 3.819
+  }
+}

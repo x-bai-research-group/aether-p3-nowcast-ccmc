@@ -1,28 +1,40 @@
 # Installation
 
-## One-command reference installation
+## Reference example
 
-On Linux with Conda available, the recommended first run is:
+On Linux with Conda installed, the shortest complete test is:
 
 ```bash
 ./scripts/run_example.sh
 ```
 
-This creates the declared environment when necessary, installs the package,
-runs the frozen model with the committed preprocessed input fixture, and
-verifies the resulting NetCDF against the reference output. The Java feature
-generator and production driver archive are not required for this small test.
+The script creates the declared environment when necessary, installs the
+package, evaluates the released model on included preprocessed inputs, writes a
+small NetCDF file, and compares it with the included reference.
 
-## System requirements
+This example does not require the Java feature generator or third-party driver
+files.
+
+## Requirements
 
 - Linux x86-64;
 - Python 3.11 or 3.12;
 - Java Development Kit 17 or newer;
 - Maven 3.8 or newer;
-- 64 GB system RAM recommended for training;
-- a CUDA-capable GPU is strongly recommended for training.
+- at least 16 GB RAM recommended for global-field inference;
+- 64 GB RAM and a CUDA-capable GPU recommended for training.
 
-## Python environment
+A GPU is optional for inference. On the reference system, a complete
+251,100-point field required approximately 102 s on CPU and 27 s with an
+NVIDIA RTX 5090. These times include feature generation, empirical-model
+evaluation, neural-network inference, and NetCDF writing.
+
+For a precomputed 342-dimensional input, the measured warm median model
+evaluation time was approximately 0.393 s on CPU and 0.075 s on the RTX 5090.
+This single-point measurement excludes feature construction and empirical-model
+evaluation.
+
+## Manual installation
 
 ```bash
 conda env create -f environment.yml
@@ -30,13 +42,7 @@ conda activate aether-p3-nowcast
 python -m pip install .
 ```
 
-To run the optional source-code tests, install the test dependency separately:
-
-```bash
-python -m pip install '.[test]'
-```
-
-## Feature generator
+Build the Java feature generator:
 
 ```bash
 cd feature_generator
@@ -44,23 +50,36 @@ mvn -q test package
 cd ..
 ```
 
-The expected executable is:
+The resulting executable is:
 
 ```text
 feature_generator/target/aether-p3-feature-generator-1.0.0.jar
 ```
 
-## External data
+## Scientific driver files
 
-The repository includes Orekit auxiliary data and the space-weather files that
-fit ordinary GitHub storage. Add the two larger required files, `AE.csv` and
-`solarwind.csv`, under `data/space-weather`. Both runtime locations are
-declared in `config/production.json`. Product definitions and authoritative
-sources are listed in [`DATA_SOURCES.md`](DATA_SOURCES.md). Run
-`scripts/run_checks.sh` after installation.
+Obtain the external driver and Orekit files described in
+[Scientific driver data](RUNTIME_DATA_SETUP.md), then check their presence:
 
-## Runtime verification
+```bash
+python scripts/check_runtime_data.py
+```
 
-Use the TensorFlow version declared by the environment and run the unit tests
-and one reference NetCDF generation after installing the package on a new
-system.
+## Verification
+
+Run the Python and Java checks:
+
+```bash
+scripts/run_checks.sh
+```
+
+Generate one global field:
+
+```bash
+aether-p3-nowcast grid \
+  --config config/production.json \
+  --utc 2024-05-11T12:00:00Z \
+  --output-dir output
+```
+
+The UTC must lie on a five-minute boundary.

@@ -2,7 +2,7 @@
 
 `input/preprocessed_example.npz` contains eight fully assembled 342-dimensional
 model-input records at one UTC. It contains no original AE or solar-wind source
-records. From the repository root, the recommended frozen-inference test is:
+records. From the repository root, the recommended inference example is:
 
 ```bash
 ./scripts/run_example.sh

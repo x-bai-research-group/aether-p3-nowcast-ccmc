@@ -433,7 +433,7 @@
     "row_order": "selected subsequence of the source global shuffle",
     "density_used_for_selection": false,
     "mission_used_for_selection": false,
-    "formal_tests_used": false,
+    "evaluation_benchmark_results_used_for_sampling": false,
     "sample_weights": "natural unit weights; no inverse weighting",
     "solar_definition": "mean of causal F10 D-1 through D-7; high solar >=150",
     "geomagnetic_definition": "current Dst: quiet >-30, transition (-50,-30], moderate (-150,-50], extreme <=-150 nT",

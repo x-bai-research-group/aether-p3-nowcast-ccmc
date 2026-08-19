@@ -1,4 +1,4 @@
-"""Validation diagnostics for a checkpoint selected without formal tests."""
+"""Validation diagnostics that do not read evaluation benchmark cases."""
 
 from __future__ import annotations
 
@@ -88,8 +88,8 @@ def evaluate(
     training_audit = json.loads(
         (run_dir / "TRAINING_AUDIT.json").read_text(encoding="utf-8")
     )
-    if training_audit.get("formal_tests_used") is not False:
-        raise RuntimeError("training audit does not exclude formal tests")
+    if training_audit.get("evaluation_benchmarks_used") is not False:
+        raise RuntimeError("training audit does not exclude evaluation benchmarks")
     if Path(training_audit["configuration"]["dataset_root"]).resolve() != dataset_root:
         raise RuntimeError("validation dataset differs from training")
     checkpoint_path = Path(training_audit["checkpoint"])
@@ -185,7 +185,7 @@ def evaluate(
     }
     validation_report = {
         "status": "VALIDATION_COMPLETE",
-        "formal_tests_read": False,
+        "evaluation_benchmarks_read": False,
         "checkpoint": str(checkpoint_path),
         "selected_epoch": int(training_audit["selected_epoch"]),
         "selected_validation_panel_edl_loss": float(

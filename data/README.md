@@ -1,32 +1,21 @@
 # Runtime data
 
-The repository includes the following runtime drivers under
-`data/space-weather`:
+Third-party space-weather and Orekit data are not redistributed in this
+repository. Obtain them directly from the authoritative providers and place
+them under these local directories:
 
 ```text
-Apo30.csv
-DST.csv
-DTCFILE.TXT
-SOLFSMY.TXT
-SW-All.txt
-radio_flux_adjusted.txt
+data/space-weather/
+data/orekit-data/
 ```
 
-Two required files exceed GitHub's individual-file limit and must be supplied
-locally in the same directory:
+Required filenames, roles, and sources are documented in
+[`docs/RUNTIME_DATA_SETUP.md`](../docs/RUNTIME_DATA_SETUP.md). After preparing
+the files, verify the local installation with:
 
-```text
-AE.csv
-solarwind.csv
+```bash
+python scripts/check_runtime_data.py
 ```
 
-The one-command reference test uses an already assembled model-input fixture
-and therefore does not redistribute excerpts of these source products.
-
-Orekit runtime data are included under `data/orekit-data/`. Required products,
-causality rules, filenames, and authoritative sources are documented in
-[`docs/INPUTS_AND_LATENCY.md`](../docs/INPUTS_AND_LATENCY.md) and
-[`docs/DATA_SOURCES.md`](../docs/DATA_SOURCES.md).
-
-Before any public redistribution, confirm the applicable upstream terms for
-all third-party data products.
+The one-command example uses a small preprocessed fixture and does not require
+the third-party runtime archive.

@@ -1,167 +1,180 @@
-# AETHER-P3 Nowcast
+# AETHER-P³ Nowcast
 
-AETHER-P3 Nowcast is a global thermospheric neutral-density model designed for
-near-real-time estimation of density and predictive uncertainty. It combines
-the current location and time, causal solar and geomagnetic histories, solar
-wind conditions, and two empirical-density references.
+AETHER-P³ Nowcast estimates global thermospheric neutral mass density and its
+predictive uncertainty from the recent solar, geomagnetic, and solar-wind
+state. The model is intended for low-Earth-orbit applications within
+230–530 km altitude, with 250–520 km treated as its principal application
+range.
 
-The model uses 342 physical inputs divided into six groups:
+**Model owner/scientific contact:** Xiaoli Bai
+([xiaoli.bai@rutgers.edu](mailto:xiaoli.bai@rutgers.edu))<br>
+**Technical contact:** Ruochen Wang
+([ruo.chen.wang@rutgers.edu](mailto:ruo.chen.wang@rutgers.edu))
 
-| input group | shape | dimensions |
-|---|---:|---:|
-| location and time | 10 | 10 |
-| solar background | 2 | 2 |
-| solar-proxy history | 7 × 4 | 28 |
-| short forcing history | 35 × 6 | 210 |
-| long geomagnetic history | 45 × 2 | 90 |
-| empirical density references | 2 | 2 |
+The prediction target is
 
-Longitude is represented by sine and cosine, making the model continuous
-across the international date line. Location and time are encoded separately
-before being combined with the solar, geomagnetic, solar-wind, and empirical
-states.
+$$
+y=\frac{\log_{10}(\rho)-\mu_y}{\sigma_y},
+$$
 
-One model call jointly returns four normal-inverse-gamma parameters:
+where $\rho$ is neutral mass density in kg m$^{-3}$, and $\mu_y$ and
+$\sigma_y$ are calculated from the training data. A single neural-network
+evaluation returns the four normal-inverse-gamma parameters
+$(\gamma,\nu,\alpha,\beta)$. They define a central density estimate and a
+predictive Student-t distribution without post-hoc uncertainty scaling.
 
-**(γ, ν, α, β)**
+## Scientific inputs
 
-Here, γ is the normalized mean log-density prediction. The remaining
-parameters define the predictive Student-t distribution used to obtain density
-intervals and separate aleatoric and epistemic uncertainty estimates. No
-post-hoc calibration scale is applied.
+The model uses 342 values organized by physical role.
 
-The native global product has:
+| input group | shape | dimensions | physical information |
+|---|---:|---:|---|
+| location and time | 10 | 10 | latitude, periodic longitude, altitude, season, UTC, and local solar time |
+| solar background | 2 | 2 | previous-day F10.7 and current-day F30 |
+| solar-proxy history | 7 × 4 | 28 | delayed F10, S10, M10, and Y10 histories |
+| short forcing history | 35 × 6 | 210 | Dst, ap30, GSM Bz, solar-wind speed, proton density, and AE over the preceding 170 minutes |
+| long geomagnetic history | 45 × 2 | 90 | hourly AE and Dst from 48 to 4 hours before prediction |
+| empirical references | 2 | 2 | current-location JB2008 and NRLMSISE-00 log-density estimates |
 
-- five-minute temporal cadence;
-- 2-degree latitude spacing;
-- 4-degree longitude spacing;
-- 230–530 km altitude coverage at 10 km spacing;
-- NetCDF4 output containing density, predictive intervals, uncertainty
-  components, and the four distribution parameters.
+The histories contain only states at or before the requested time. Separate
+encoders represent rapid upstream forcing, longer geomagnetic memory, solar
+history, empirical-model context, and the requested location and time. These
+representations are then combined to predict density and uncertainty jointly.
 
-## One-command example
+Longitude is represented by sine and cosine rather than a discontinuous scalar.
+Consequently, the same geographic meridian has the same representation at
+$-180^\circ$ and $+180^\circ$, preventing an artificial density seam in a
+global field.
 
-On Linux with Conda installed, a clean checkout can install the declared
-environment, run the frozen model, and verify a reference NetCDF using one
-command:
+Detailed input definitions and temporal delays are given in
+[Inputs and latency](docs/INPUTS_AND_LATENCY.md). Data sources and
+preprocessing are described in [Data sources](docs/DATA_SOURCES.md) and
+[Driver preprocessing](docs/DRIVER_PREPROCESSING.md).
+
+## Output field
+
+The standard product is a NetCDF4 field with dimensions
+`time × altitude × latitude × longitude`. Its default grid is:
+
+- one field every five minutes;
+- 2° latitude spacing, centered from $-89^\circ$ to $+89^\circ$;
+- 4° longitude spacing, centered from $-178^\circ$ to $+178^\circ$;
+- 10 km altitude spacing from 230 to 530 km.
+
+Each grid point contains density, the 95% predictive interval, aleatoric and
+epistemic standard deviations in log-density, and
+$(\gamma,\nu,\alpha,\beta)$. See [NetCDF output](docs/OUTPUT_NETCDF.md) for
+the variable definitions.
+
+## Data and evaluation
+
+Accelerometer-derived densities from CHAMP, GRACE-A, GOCE, Swarm-C, and
+GRACE-FO provide the observational target. Density observations are not
+linearly interpolated. Missing or flagged OMNI solar-wind drivers in the
+fixed research driver table were linearly interpolated before construction of
+the model histories; this is separate from density-label processing.
+
+Training and validation intervals are temporally disjoint and protected by a
+48-hour history guard. Within each random-seed run, the checkpoint epoch is
+selected exclusively by the panel-balanced validation EDL loss. After all
+seed-specific checkpoints have been fixed, validation behavior and the 12
+evaluation benchmarks are considered jointly when choosing the released model
+realization. The benchmarks therefore do not affect checkpoint selection, but
+they do affect the final choice of random seed and are not described as an
+untouched independent test set. The complete definitions are in
+[Validation protocol](docs/VALIDATION.md).
+
+## Run the included example
+
+On Linux with Conda installed:
 
 ```bash
 ./scripts/run_example.sh
 ```
 
-The first run creates the `aether-p3-nowcast` Conda environment and may take
-several minutes while dependencies are installed. A successful end-to-end run
-finishes with:
+This command creates the declared Python environment when necessary, evaluates
+the released model on eight preprocessed examples, writes a small NetCDF file,
+and compares it with the included reference. A successful run ends with:
 
 ```text
 AETHER-P3 example: PASS
-Output: .../aether_p3_nowcast_20240528T120000Z.nc
 ```
 
-The example evaluates eight grid points using the release model weights,
-training normalization, and a committed array of 342-dimensional preprocessed
-model inputs. No third-party source records are redistributed with this test.
-The production `grid` command separately constructs the same input contract
-from the complete operational driver archive.
+The example contains derived model inputs, not third-party source records.
 
-## Scientific attribution
+## Generate a global field
 
-The uncertainty formulation, empirical density inputs, and orbital-environment
-calculations build on the following work:
-
-- Amini, A., Schwarting, W., Soleimany, A., and Rus, D. (2020),
-  [*Deep Evidential Regression*](https://proceedings.neurips.cc/paper/2020/hash/aab085461de182608ee9f607f3f7d18f-Abstract.html),
-  Advances in Neural Information Processing Systems 33.
-- Bowman, B. R., et al. (2008),
-  [*A New Empirical Thermospheric Density Model JB2008 Using New Solar and
-  Geomagnetic Indices*](https://doi.org/10.2514/6.2008-6438), AIAA 2008-6438.
-- Picone, J. M., Hedin, A. E., Drob, D. P., and Aikin, A. C. (2002),
-  [*NRLMSISE-00 empirical model of the atmosphere: Statistical comparisons and
-  scientific issues*](https://doi.org/10.1029/2002JA009430), Journal of
-  Geophysical Research: Space Physics, 107(A12).
-- Orekit Team,
-  [Orekit 13.1.4](https://www.orekit.org/site-orekit-13.1.4/downloads.html),
-  used for time scales, reference frames, Sun position, and the local JB2008
-  and NRLMSISE-00 evaluations.
-
-Authoritative sources for the satellite density observations and operational
-space-weather drivers are listed in
-[`docs/DATA_SOURCES.md`](docs/DATA_SOURCES.md).
-
-## Manual installation
-
-AETHER-P3 Nowcast requires Python 3.11 or 3.12, Java 17 or newer, and Maven
-3.8 or newer. Create the supplied environment, install the Python package, and
-build the Java feature generator:
+Full field generation requires the driver files and Orekit data listed in
+[Runtime data setup](docs/RUNTIME_DATA_SETUP.md):
 
 ```bash
 conda env create -f environment.yml
 conda activate aether-p3-nowcast
-python -m pip install -e '.[test]'
+python -m pip install .
 
 cd feature_generator
 mvn -q test package
 cd ..
-```
 
-Manual installation and production use require the complete runtime driver
-archive. The repository includes the model weights, normalization, Orekit
-auxiliary data, and space-weather files that are below GitHub's individual-file
-limit. Two high-resolution files are too large for ordinary GitHub storage and
-must be placed under `data/space-weather`:
-
-```text
-AE.csv
-solarwind.csv
-```
-
-Their authoritative sources and expected roles are documented in
-[`docs/DATA_SOURCES.md`](docs/DATA_SOURCES.md). The exact filenames and causal
-latencies are listed in
-[`docs/INPUTS_AND_LATENCY.md`](docs/INPUTS_AND_LATENCY.md).
-
-## Additional checks
-
-Run the Python and Java checks:
-
-```bash
-scripts/run_checks.sh
-```
-
-Display the complete 342-input contract:
-
-```bash
-aether-p3-nowcast contract
-```
-
-## Generate a global nowcast
-
-The following command generates one three-dimensional NetCDF field at the
-requested UTC:
-
-```bash
 aether-p3-nowcast grid \
   --config config/production.json \
   --utc 2024-05-11T12:00:00Z \
   --output-dir output
 ```
 
-The requested UTC must lie on a five-minute boundary. The production grid uses
-2-degree latitude spacing, 4-degree longitude spacing, and altitudes from 230
-to 530 km at 10 km spacing. Existing NetCDF files are never overwritten.
+The requested UTC must lie on a five-minute boundary. Further installation and
+training commands are provided in [Installation](docs/INSTALLATION.md) and the
+[User guide](docs/USER_GUIDE.md).
 
-A preprocessed input fixture, a small production-path configuration, and a
-reference output are provided under `examples/`. Additional installation,
-input, output, and validation details are available in `docs/`.
+## Computational requirements
 
-## Train from a prepared dataset
+A GPU is not required for inference. Complete global-field generation is
+recommended on a system with at least 16 GB RAM. On the reference Ubuntu 24.04
+system, the warm median evaluation time for one precomputed 342-dimensional
+input was approximately 0.393 s on an Intel Core Ultra 9 285K CPU and 0.075 s
+on an NVIDIA RTX 5090. One complete 251,100-point field required approximately
+102 s on the CPU and 27 s with GPU-accelerated TensorFlow inference. Runtime
+depends on hardware, Java feature construction, empirical-model evaluation,
+and driver-file access.
 
-Training data are not distributed with this repository. A compatible prepared
-dataset can be checked and used as follows:
+## Model release
 
-```bash
-aether-p3-nowcast check --dataset-root /path/to/training_dataset
-scripts/run_training.sh /path/to/training_dataset runs/training
-```
+| item | value |
+|---|---|
+| version | 1.0.0 |
+| input definition | `aether-p3-nowcast-342-v1` |
+| trained seed | 20 |
+| selected epoch | 117 |
+| model weights | `model/model.weights.h5` |
+| weight SHA-256 | `eecc45f27e5fc40d80f74f1b2cc2c803f5c6d7dc6174ee17ae4225ffddec8a04` |
+| supported Python | 3.11 or 3.12 |
+| tested operating system | Ubuntu 24.04 x86-64 |
 
-The default `config/seeds.json` sets the training random seed to 20.
+## Scientific publications describing the AETHER-P³ framework
+
+- Wang, Y., and Bai, X. (2024), [*A Global Thermospheric Density Prediction
+  Framework Based on a Deep Evidential
+  Method*](https://doi.org/10.1029/2024SW004070), *Space Weather*, 22(12).
+- Wang, R., and Bai, X. (2026), [*A Machine-Learning-Based Global
+  Thermospheric Density Forecasting
+  Model*](https://doi.org/10.1029/2026SW004968), *Space Weather*, 24(6).
+
+## Supporting methods and models
+
+- Amini, A., Schwarting, W., Soleimany, A., and Rus, D. (2020),
+  [*Deep Evidential
+  Regression*](https://proceedings.neurips.cc/paper/2020/hash/aab085461de182608ee9f607f3f7d18f-Abstract.html).
+- Bowman, B. R., et al. (2008), [*A New Empirical Thermospheric Density Model
+  JB2008 Using New Solar and Geomagnetic
+  Indices*](https://doi.org/10.2514/6.2008-6438).
+- Picone, J. M., et al. (2002), [*NRLMSISE-00 empirical model of the
+  atmosphere*](https://doi.org/10.1029/2002JA009430).
+- Orekit Team, [*Orekit: An accurate and efficient core layer for space flight
+  dynamics applications*](https://www.orekit.org/).
+
+AETHER-P³ Nowcast v1.0.0 is an evolved model configuration intended for
+reproducible global nowcasting and is not identical to the configurations
+reported in the publications above.
+
+The software is released under the MIT License. Third-party scientific data
+remain subject to the terms of their original providers.

@@ -1,3 +1,4 @@
+import hashlib
 import json
 from pathlib import Path
 
@@ -25,8 +26,20 @@ def test_deployment_artifact_is_complete_and_loadable():
     assert metadata["feature_contract"] == CONTRACT_ID
     assert metadata["feature_count"] == FEATURE_COUNT
     assert metadata["parameter_count"] == MODEL_PARAMETER_COUNT
+    assert metadata["checkpoint_filename"] == "model.weights.h5"
+    weights = root / metadata["checkpoint_filename"]
+    digest = hashlib.sha256(weights.read_bytes()).hexdigest()
+    assert digest == metadata["checkpoint_sha256"]
     assert metadata["output"] == ["gamma", "nu", "alpha", "beta"]
-    assert metadata["selection_used_formal_tests"] is False
+    assert metadata["checkpoint_selection_used_formal_tests"] is False
+    assert metadata["checkpoint_selection_used_evaluation_benchmarks"] is False
+    assert metadata["evaluation_benchmark_case_count"] == 12
+    assert metadata["release_realization_selection"] == {
+        "method": "balanced comparison across trained seeds",
+        "selected_seed": 20,
+        "used_formal_tests": True,
+        "used_evaluation_benchmarks": True,
+    }
 
     model = NowcastModel(root)
     assert model.model.count_params() == MODEL_PARAMETER_COUNT
