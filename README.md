@@ -99,8 +99,9 @@ separately in `model/metadata.json`.
 | trained checkpoint | `model/model.weights.h5` |
 | checkpoint SHA-256 | `eecc45f27e5fc40d80f74f1b2cc2c803f5c6d7dc6174ee17ae4225ffddec8a04` |
 | supported Python | 3.11 or 3.12 |
-| tested Python | 3.12.7 |
+| tested Python | 3.12.11 |
 | TensorFlow dependency | 2.18 or newer, below 2.21 |
+| tested TensorFlow | 2.20.0-compatible local build |
 | tested operating system | Ubuntu 24.04 x86-64 |
 
 The annotated `v1.0.0` tag is the authoritative link to the exact Git commit
@@ -170,11 +171,20 @@ The exact filenames and causal treatment are also summarized in
 A GPU is not required for frozen-model inference. The production path has been
 tested on Ubuntu 24.04 with an Intel Core Ultra 9 285K, 64 GB RAM, and an
 NVIDIA GeForce RTX 5090; 16 GB RAM is recommended for complete global-field
-generation. Warm neural-network inference for one preprocessed point required
-approximately 0.4 seconds on the tested CPU. One standard 31 × 90 × 90 field
-(251,100 points) required approximately 103 seconds end to end, including driver
-feature generation, JB2008 and NRLMSISE-00 evaluation, neural-network
-inference, and NetCDF writing. Hardware and driver I/O can change this time.
+generation.
+
+| measured inference task | CPU | RTX 5090 | GPU speedup |
+|---|---:|---:|---:|
+| one preprocessed point, warm median | 0.393 s | 0.075 s | 5.23× |
+| model and physical-output conversion, 251,100 points | 84.41 s | 7.31 s | 11.54× |
+| complete 31 × 90 × 90 production field | 102.46 s | 26.83 s | 3.82× |
+
+The complete-field measurement includes driver feature generation, JB2008 and
+NRLMSISE-00 evaluation, neural-network inference, and NetCDF writing. The
+non-neural stages remain on the CPU, which explains the smaller end-to-end GPU
+speedup. Hardware and driver I/O can change these times. The recorded protocol
+and results are available in
+[`docs/benchmarks/runtime_2026-08-19.json`](docs/benchmarks/runtime_2026-08-19.json).
 Reproducible CPU/GPU benchmark commands are provided in
 [`docs/INSTALLATION.md`](docs/INSTALLATION.md#system-requirements).
 

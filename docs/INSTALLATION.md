@@ -24,7 +24,11 @@ generator and production driver archive are not required for this small test.
 
 A GPU is not required for inference. At least 16 GB system RAM is recommended
 for complete global-field generation. On the tested Intel Core Ultra 9 285K
-CPU, a 251,100-point field required approximately 103 seconds end to end.
+and NVIDIA RTX 5090 system, a 251,100-point production field required 102.46
+seconds with the GPU hidden and 26.83 seconds with GPU inference enabled. The
+corresponding model-only times were 84.41 and 7.31 seconds. Full protocol and
+environment details are recorded in
+[`benchmarks/runtime_2026-08-19.json`](benchmarks/runtime_2026-08-19.json).
 
 To measure the neural-network component on the installation hardware, run the
 same frozen-input benchmark once with the GPU hidden and once with GPU 0:
