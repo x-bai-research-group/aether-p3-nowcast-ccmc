@@ -8,14 +8,14 @@ range.
 
 The prediction target is
 
-\[
+$$
 y=\frac{\log_{10}(\rho)-\mu_y}{\sigma_y},
-\]
+$$
 
-where \(\rho\) is neutral mass density in kg m\(^{-3}\), and \(\mu_y\) and
-\(\sigma_y\) are calculated from the training data. A single neural-network
+where $\rho$ is neutral mass density in kg m$^{-3}$, and $\mu_y$ and
+$\sigma_y$ are calculated from the training data. A single neural-network
 evaluation returns the four normal-inverse-gamma parameters
-\((\gamma,\nu,\alpha,\beta)\). They define a central density estimate and a
+$(\gamma,\nu,\alpha,\beta)$. They define a central density estimate and a
 predictive Student-t distribution without post-hoc uncertainty scaling.
 
 ## Scientific inputs
@@ -38,7 +38,7 @@ representations are then combined to predict density and uncertainty jointly.
 
 Longitude is represented by sine and cosine rather than a discontinuous scalar.
 Consequently, the same geographic meridian has the same representation at
-\(-180^\circ\) and \(+180^\circ\), preventing an artificial density seam in a
+$-180^\circ$ and $+180^\circ$, preventing an artificial density seam in a
 global field.
 
 Detailed input definitions and temporal delays are given in
@@ -52,13 +52,13 @@ The standard product is a NetCDF4 field with dimensions
 `time × altitude × latitude × longitude`. Its default grid is:
 
 - one field every five minutes;
-- 2° latitude spacing, centered from \(-89^\circ\) to \(+89^\circ\);
-- 4° longitude spacing, centered from \(-178^\circ\) to \(+178^\circ\);
+- 2° latitude spacing, centered from $-89^\circ$ to $+89^\circ$;
+- 4° longitude spacing, centered from $-178^\circ$ to $+178^\circ$;
 - 10 km altitude spacing from 230 to 530 km.
 
 Each grid point contains density, the 95% predictive interval, aleatoric and
 epistemic standard deviations in log-density, and
-\((\gamma,\nu,\alpha,\beta)\). See [NetCDF output](docs/OUTPUT_NETCDF.md) for
+$(\gamma,\nu,\alpha,\beta)$. See [NetCDF output](docs/OUTPUT_NETCDF.md) for
 the variable definitions.
 
 ## Data and evaluation

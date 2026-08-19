@@ -12,11 +12,11 @@ interpolated between satellite observations.
 
 The neural network is trained on normalized log-density,
 
-\[
+$$
 y=\frac{\log_{10}(\rho)-\mu_y}{\sigma_y},
-\]
+$$
 
-where \(\mu_y\) and \(\sigma_y\) are calculated only from the selected training
+where $\mu_y$ and $\sigma_y$ are calculated only from the selected training
 records. Feature normalization is likewise calculated from training records
 only.
 
@@ -26,7 +26,7 @@ only.
 |---|---|---|
 | Dst | hourly | finite Kyoto value assigned to its UTC hour |
 | ap30 | half-hourly | linear ap30 becomes available at the end of its 30-minute interval |
-| AE | one minute | OMNI-derived AE archive; valid range \(0\leq AE<99999\) nT |
+| AE | one minute | OMNI-derived AE archive; valid range $0\leq AE<99999$ nT |
 | GSM Bz | one minute | selected OMNI column after offline interpolation |
 | solar-wind speed | one minute | selected OMNI column after offline interpolation |
 | proton density | one minute | selected OMNI column after offline interpolation |
@@ -55,12 +55,12 @@ one fixed AE archive is used throughout model-data construction.
 
 ## Temporal input construction
 
-For a requested time \(t\), the model histories are assembled as follows.
+For a requested time $t$, the model histories are assembled as follows.
 
-| input | states | times relative to \(t\) |
+| input | states | times relative to $t$ |
 |---|---:|---|
-| short forcing history | 35 | \(t-170\) min to \(t\), every 5 min |
-| long AE/Dst history | 45 | \(t-48\) h to \(t-4\) h, every 1 h |
+| short forcing history | 35 | $t-170$ min to $t$, every 5 min |
+| long AE/Dst history | 45 | $t-48$ h to $t-4$ h, every 1 h |
 | F10 history | 7 | D-1 through D-7 |
 | S10 history | 7 | D-1 through D-7 |
 | M10 history | 7 | D-2 through D-8 |

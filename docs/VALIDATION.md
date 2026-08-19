@@ -24,28 +24,28 @@ Evaluation-benchmark cases are not used to choose an epoch.
 
 ## Accuracy metrics
 
-For observed density \(\rho_i\) and prediction \(\hat{\rho}_i\):
+For observed density $\rho_i$ and prediction $\hat{\rho}_i$:
 
-\[
+$$
 \mathrm{RE}
 =\frac{1}{N}\sum_i
 \left|\frac{\hat{\rho}_i-\rho_i}{\rho_i}\right|,
 \qquad
 \mathrm{RMSE}
 =\sqrt{\frac{1}{N}\sum_i(\hat{\rho}_i-\rho_i)^2}.
-\]
+$$
 
-Pearson \(R\) measures agreement in the temporal variation of physical
-density. RE, \(R\), and RMSE are interpreted together because they emphasize
+Pearson $R$ measures agreement in the temporal variation of physical
+density. RE, $R$, and RMSE are interpreted together because they emphasize
 different error properties.
 
 ## Uncertainty metrics
 
 Student-t coverage is evaluated at nominal central interval probabilities
 
-\[
+$$
 0.05,\ 0.10,\ 0.20,\ldots,\ 0.90,\ 0.95,\ 0.99.
-\]
+$$
 
 MACE is the mean absolute difference between nominal and empirical coverage
 over those levels. Smaller MACE indicates better calibration over the full

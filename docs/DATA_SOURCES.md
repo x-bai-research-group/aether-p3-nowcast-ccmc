@@ -61,7 +61,7 @@ Both empirical models are evaluated locally using
 [Orekit 13.1.4](https://www.orekit.org/site-orekit-13.1.4/downloads.html).
 Orekit supplies time scales, Earth orientation, reference frames, geodetic
 coordinates, and the Sun position. Returned densities are converted to
-kg m\(^{-3}\) before their logarithms enter the neural network.
+kg m$^{-3}$ before their logarithms enter the neural network.
 
 ## Data availability
 

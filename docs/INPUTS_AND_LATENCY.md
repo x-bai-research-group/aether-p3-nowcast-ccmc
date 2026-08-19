@@ -8,14 +8,14 @@ empirical density references.
 
 | group | shape | dimensions | variables |
 |---|---:|---:|---|
-| location and time | 10 | 10 | latitude, \(\sin\lambda\), \(\cos\lambda\), altitude, seasonal sine/cosine, UTC sine/cosine, local-solar-time sine/cosine |
+| location and time | 10 | 10 | latitude, $\sin\lambda$, $\cos\lambda$, altitude, seasonal sine/cosine, UTC sine/cosine, local-solar-time sine/cosine |
 | solar background | 2 | 2 | previous-day F10.7, current-day adjusted F30 |
 | solar-proxy history | 7 × 4 | 28 | F10, S10, M10, and Y10 at seven delayed daily states |
-| short forcing history | 35 × 6 | 210 | Dst, ap30, GSM Bz, speed, proton density, and AE from \(t-170\) min to \(t\) |
-| long geomagnetic history | 45 × 2 | 90 | AE and Dst from \(t-48\) h to \(t-4\) h |
-| empirical references | 2 | 2 | \(\log_{10}\rho_{\mathrm{JB2008}}\) and \(\log_{10}\rho_{\mathrm{NRLMSISE00}}\) at the requested point |
+| short forcing history | 35 × 6 | 210 | Dst, ap30, GSM Bz, speed, proton density, and AE from $t-170$ min to $t$ |
+| long geomagnetic history | 45 × 2 | 90 | AE and Dst from $t-48$ h to $t-4$ h |
+| empirical references | 2 | 2 | $\log_{10}\rho_{\mathrm{JB2008}}$ and $\log_{10}\rho_{\mathrm{NRLMSISE00}}$ at the requested point |
 
-The dimensions sum to \(10+2+28+210+90+2=342\).
+The dimensions sum to $10+2+28+210+90+2=342$.
 
 ## Physical interpretation
 
