@@ -1,6 +1,6 @@
 # Scientific data sources
 
-AETHER-P3 Nowcast combines accelerometer-derived density observations,
+AETHER-P³ Nowcast combines accelerometer-derived density observations,
 space-weather drivers, and two empirical thermosphere models. This document
 identifies the source and scientific role of each product.
 

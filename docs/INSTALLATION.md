@@ -29,6 +29,11 @@ A GPU is optional for inference. On the reference system, a complete
 NVIDIA RTX 5090. These times include feature generation, empirical-model
 evaluation, neural-network inference, and NetCDF writing.
 
+For a precomputed 342-dimensional input, the measured warm median model
+evaluation time was approximately 0.393 s on CPU and 0.075 s on the RTX 5090.
+This single-point measurement excludes feature construction and empirical-model
+evaluation.
+
 ## Manual installation
 
 ```bash

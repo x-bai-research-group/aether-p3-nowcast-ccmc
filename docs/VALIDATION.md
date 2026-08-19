@@ -59,9 +59,11 @@ when the remaining predictive intervals are poorly calibrated.
 
 Twelve satellite cases are used as evaluation benchmarks. They are excluded
 from model fitting and from checkpoint selection within each seed. After all
-seed-specific checkpoints were fixed, benchmark behavior was considered
-together with validation performance when seed 20 was selected for release.
+seed-specific checkpoints were fixed, validation behavior and benchmark
+performance were considered jointly when seed 20 was selected as the released
+model realization.
 
-The benchmark cases therefore measure useful out-of-sample behavior, but they
-are not described as an untouched independent test set after final seed
-selection.
+Thus, the benchmark cases did not influence the selected epoch within any
+training run, but they did influence the final choice among trained random
+seeds. They measure useful out-of-sample behavior, but they are not described
+as an untouched independent test set after final realization selection.

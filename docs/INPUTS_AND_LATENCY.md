@@ -1,6 +1,6 @@
 # Model inputs and temporal context
 
-AETHER-P3 Nowcast uses 342 inputs. They describe the requested point, the
+AETHER-P³ Nowcast uses 342 inputs. They describe the requested point, the
 background solar state, recent forcing, longer geomagnetic memory, and two
 empirical density references.
 

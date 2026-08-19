@@ -275,10 +275,13 @@ def install(output_root: Path, dataset_root: Path, model_root: Path) -> None:
         "selected_validation_edl_loss": float(selected["validation_edl_loss"]),
         "checkpoint_filename": checkpoint_filename,
         "checkpoint_sha256": checkpoint_sha256,
+        "checkpoint_selection_used_formal_tests": False,
         "checkpoint_selection_used_evaluation_benchmarks": False,
         "evaluation_benchmark_case_count": 12,
         "release_realization_selection": {
             "method": "minimum validation EDL loss across trained seeds",
+            "selected_seed": int(selected["seed"]),
+            "used_formal_tests": False,
             "used_evaluation_benchmarks": False,
         },
         "network": _load(output_root / "configs" / f"seed{selected['seed']}.json")[

@@ -31,10 +31,13 @@ def test_deployment_artifact_is_complete_and_loadable():
     digest = hashlib.sha256(weights.read_bytes()).hexdigest()
     assert digest == metadata["checkpoint_sha256"]
     assert metadata["output"] == ["gamma", "nu", "alpha", "beta"]
+    assert metadata["checkpoint_selection_used_formal_tests"] is False
     assert metadata["checkpoint_selection_used_evaluation_benchmarks"] is False
     assert metadata["evaluation_benchmark_case_count"] == 12
     assert metadata["release_realization_selection"] == {
         "method": "balanced comparison across trained seeds",
+        "selected_seed": 20,
+        "used_formal_tests": True,
         "used_evaluation_benchmarks": True,
     }
 

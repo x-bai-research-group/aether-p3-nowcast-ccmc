@@ -1,10 +1,15 @@
-# AETHER-P3 Nowcast
+# AETHER-P³ Nowcast
 
-AETHER-P3 Nowcast estimates global thermospheric neutral mass density and its
+AETHER-P³ Nowcast estimates global thermospheric neutral mass density and its
 predictive uncertainty from the recent solar, geomagnetic, and solar-wind
 state. The model is intended for low-Earth-orbit applications within
 230–530 km altitude, with 250–520 km treated as its principal application
 range.
+
+**Model owner/scientific contact:** Xiaoli Bai
+([xiaoli.bai@rutgers.edu](mailto:xiaoli.bai@rutgers.edu))<br>
+**Technical contact:** Ruochen Wang
+([ruo.chen.wang@rutgers.edu](mailto:ruo.chen.wang@rutgers.edu))
 
 The prediction target is
 
@@ -70,10 +75,13 @@ fixed research driver table were linearly interpolated before construction of
 the model histories; this is separate from density-label processing.
 
 Training and validation intervals are temporally disjoint and protected by a
-48-hour history guard. Checkpoints are selected using validation data only.
-The 12 reported cases are evaluation benchmarks rather than an untouched test
-set because their results were considered when the final trained seed was
-chosen. The complete definitions are in
+48-hour history guard. Within each random-seed run, the checkpoint epoch is
+selected exclusively by the panel-balanced validation EDL loss. After all
+seed-specific checkpoints have been fixed, validation behavior and the 12
+evaluation benchmarks are considered jointly when choosing the released model
+realization. The benchmarks therefore do not affect checkpoint selection, but
+they do affect the final choice of random seed and are not described as an
+untouched independent test set. The complete definitions are in
 [Validation protocol](docs/VALIDATION.md).
 
 ## Run the included example
@@ -122,10 +130,12 @@ training commands are provided in [Installation](docs/INSTALLATION.md) and the
 
 A GPU is not required for inference. Complete global-field generation is
 recommended on a system with at least 16 GB RAM. On the reference Ubuntu 24.04
-system, one 251,100-point field required approximately 102 s on an Intel Core
-Ultra 9 285K CPU and 27 s when TensorFlow inference used an NVIDIA RTX 5090.
-Runtime depends on hardware, Java feature construction, empirical-model
-evaluation, and driver-file access.
+system, the warm median evaluation time for one precomputed 342-dimensional
+input was approximately 0.393 s on an Intel Core Ultra 9 285K CPU and 0.075 s
+on an NVIDIA RTX 5090. One complete 251,100-point field required approximately
+102 s on the CPU and 27 s with GPU-accelerated TensorFlow inference. Runtime
+depends on hardware, Java feature construction, empirical-model evaluation,
+and driver-file access.
 
 ## Model release
 
@@ -140,7 +150,7 @@ evaluation, and driver-file access.
 | supported Python | 3.11 or 3.12 |
 | tested operating system | Ubuntu 24.04 x86-64 |
 
-## Scientific references
+## Scientific publications describing the AETHER-P³ framework
 
 - Wang, Y., and Bai, X. (2024), [*A Global Thermospheric Density Prediction
   Framework Based on a Deep Evidential
@@ -148,6 +158,9 @@ evaluation, and driver-file access.
 - Wang, R., and Bai, X. (2026), [*A Machine-Learning-Based Global
   Thermospheric Density Forecasting
   Model*](https://doi.org/10.1029/2026SW004968), *Space Weather*, 24(6).
+
+## Supporting methods and models
+
 - Amini, A., Schwarting, W., Soleimany, A., and Rus, D. (2020),
   [*Deep Evidential
   Regression*](https://proceedings.neurips.cc/paper/2020/hash/aab085461de182608ee9f607f3f7d18f-Abstract.html).
@@ -156,17 +169,12 @@ evaluation, and driver-file access.
   Indices*](https://doi.org/10.2514/6.2008-6438).
 - Picone, J. M., et al. (2002), [*NRLMSISE-00 empirical model of the
   atmosphere*](https://doi.org/10.1029/2002JA009430).
+- Orekit Team, [*Orekit: An accurate and efficient core layer for space flight
+  dynamics applications*](https://www.orekit.org/).
 
-Version 1.0.0 is a later nowcast implementation of the AETHER-P3 framework and
-is not identical to the model configurations in the two AETHER-P3
-publications.
-
-## Contacts
-
-- Scientific contact: Xiaoli Bai
-  ([xiaoli.bai@rutgers.edu](mailto:xiaoli.bai@rutgers.edu))
-- Technical contact: Ruochen Wang
-  ([ruo.chen.wang@rutgers.edu](mailto:ruo.chen.wang@rutgers.edu))
+AETHER-P³ Nowcast v1.0.0 is an evolved model configuration intended for
+reproducible global nowcasting and is not identical to the configurations
+reported in the publications above.
 
 The software is released under the MIT License. Third-party scientific data
 remain subject to the terms of their original providers.

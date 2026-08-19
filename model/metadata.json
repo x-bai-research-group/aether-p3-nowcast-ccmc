@@ -9,10 +9,13 @@
   "selected_validation_edl_loss": -1.0528661310642342,
   "checkpoint_filename": "model.weights.h5",
   "checkpoint_sha256": "eecc45f27e5fc40d80f74f1b2cc2c803f5c6d7dc6174ee17ae4225ffddec8a04",
+  "checkpoint_selection_used_formal_tests": false,
   "checkpoint_selection_used_evaluation_benchmarks": false,
   "evaluation_benchmark_case_count": 12,
   "release_realization_selection": {
     "method": "balanced comparison across trained seeds",
+    "selected_seed": 20,
+    "used_formal_tests": true,
     "used_evaluation_benchmarks": true
   },
   "network": {
