@@ -41,6 +41,29 @@ The benchmark reports warm single-point latency and batched inference for the
 the two empirical-model calculations, and NetCDF writing; those steps remain
 part of the separately reported end-to-end field time.
 
+Measure the complete production path at the same UTC with separate output
+directories:
+
+```bash
+mkdir -p runs/runtime_benchmark/cpu runs/runtime_benchmark/gpu
+/usr/bin/time -f "elapsed_seconds=%e peak_memory_kb=%M" \
+  -o runs/runtime_benchmark/cpu_time.txt \
+  env CUDA_VISIBLE_DEVICES=-1 aether-p3-nowcast grid \
+  --config config/production.json \
+  --utc 2024-05-11T12:00:00Z \
+  --output-dir runs/runtime_benchmark/cpu
+/usr/bin/time -f "elapsed_seconds=%e peak_memory_kb=%M" \
+  -o runs/runtime_benchmark/gpu_time.txt \
+  env CUDA_VISIBLE_DEVICES=0 aether-p3-nowcast grid \
+  --config config/production.json \
+  --utc 2024-05-11T12:00:00Z \
+  --output-dir runs/runtime_benchmark/gpu
+```
+
+The GPU run accelerates the TensorFlow stage only. Java feature generation,
+JB2008, NRLMSISE-00, and NetCDF writing remain CPU operations, so the
+end-to-end speedup will be smaller than the neural-network-only speedup.
+
 ## Python environment
 
 ```bash
