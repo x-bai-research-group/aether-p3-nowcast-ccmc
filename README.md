@@ -136,7 +136,9 @@ will be finalized in coordination with CCMC during model onboarding.
 
 Authoritative sources for the satellite density observations and research
 driver products are listed in
-[`docs/DATA_SOURCES.md`](docs/DATA_SOURCES.md).
+[`docs/DATA_SOURCES.md`](docs/DATA_SOURCES.md). The canonical schemas and
+causal UTC assembly of locally prepared driver tables are documented in
+[`docs/DRIVER_PREPROCESSING.md`](docs/DRIVER_PREPROCESSING.md).
 
 ## Manual installation
 

@@ -40,4 +40,6 @@ solarwind.csv
 Orekit Earth-orientation and ephemeris data are also required. Redistribution
 rights are not assumed: the repository does not distribute these third-party
 runtime files. Authoritative sources and local setup instructions are provided
-in [`RUNTIME_DATA_SETUP.md`](RUNTIME_DATA_SETUP.md).
+in [`RUNTIME_DATA_SETUP.md`](RUNTIME_DATA_SETUP.md). The construction of the
+locally assembled CSV products and their UTC join into the model input are
+specified in [`DRIVER_PREPROCESSING.md`](DRIVER_PREPROCESSING.md).

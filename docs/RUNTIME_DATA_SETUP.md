@@ -27,6 +27,11 @@ The first four products are consumed in provider-style formats. The remaining
 research CSV files are local preprocessing products and are not presented as
 provider-issued operational files.
 
+The exact canonical columns, retained source fields, validity filters, and UTC
+assembly rules for these local products are defined in
+[`DRIVER_PREPROCESSING.md`](DRIVER_PREPROCESSING.md). Format conversion does
+not imply permission to redistribute the resulting table.
+
 ## Orekit auxiliary data
 
 Obtain the official [Orekit data archive](https://gitlab.orekit.org/orekit/orekit-data/)

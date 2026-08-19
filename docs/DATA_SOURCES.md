@@ -23,7 +23,9 @@ will be finalized in coordination with CCMC during model onboarding.
 
 The files named below are obtained or prepared locally and are not
 redistributed by this repository. See
-[`RUNTIME_DATA_SETUP.md`](RUNTIME_DATA_SETUP.md) for installation details.
+[`RUNTIME_DATA_SETUP.md`](RUNTIME_DATA_SETUP.md) for installation details and
+[`DRIVER_PREPROCESSING.md`](DRIVER_PREPROCESSING.md) for the exact local
+schemas and temporal assembly rules.
 
 | local product | model variables | authoritative source |
 |---|---|---|
