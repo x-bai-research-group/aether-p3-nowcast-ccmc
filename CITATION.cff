@@ -1,8 +1,41 @@
 cff-version: 1.2.0
 title: "AETHER-P3 Nowcast"
-message: "Please contact the model developers for the preferred citation before publication."
+message: "Please cite the preferred scientific publication and this software release."
 type: software
 version: 1.0.0
 date-released: 2026-08-18
+repository-code: "https://github.com/x-bai-research-group/aether-p3-nowcast-ccmc"
+license: MIT
 authors:
-  - name: "AETHER-P3 Nowcast developers"
+  - family-names: Wang
+    given-names: Ruochen
+    email: ruo.chen.wang@rutgers.edu
+  - family-names: Bai
+    given-names: Xiaoli
+    email: xiaoli.bai@rutgers.edu
+preferred-citation:
+  type: article
+  authors:
+    - family-names: Wang
+      given-names: Ruochen
+    - family-names: Bai
+      given-names: Xiaoli
+  title: "A Machine-Learning-Based Global Thermospheric Density Forecasting Model"
+  journal: "Space Weather"
+  volume: 24
+  issue: 6
+  year: 2026
+  doi: "10.1029/2026SW004968"
+references:
+  - type: article
+    authors:
+      - family-names: Wang
+        given-names: Yiran
+      - family-names: Bai
+        given-names: Xiaoli
+    title: "A Global Thermospheric Density Prediction Framework Based on a Deep Evidential Method"
+    journal: "Space Weather"
+    volume: 22
+    issue: 12
+    year: 2024
+    doi: "10.1029/2024SW004070"

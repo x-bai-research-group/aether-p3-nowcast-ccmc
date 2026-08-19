@@ -26,7 +26,12 @@ def test_deployment_artifact_is_complete_and_loadable():
     assert metadata["feature_count"] == FEATURE_COUNT
     assert metadata["parameter_count"] == MODEL_PARAMETER_COUNT
     assert metadata["output"] == ["gamma", "nu", "alpha", "beta"]
-    assert metadata["selection_used_formal_tests"] is False
+    assert metadata["checkpoint_selection_used_evaluation_benchmarks"] is False
+    assert metadata["evaluation_benchmark_case_count"] == 12
+    assert metadata["release_realization_selection"] == {
+        "method": "balanced comparison across trained seeds",
+        "used_evaluation_benchmarks": True,
+    }
 
     model = NowcastModel(root)
     assert model.model.count_params() == MODEL_PARAMETER_COUNT

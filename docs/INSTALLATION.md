@@ -22,6 +22,10 @@ generator and production driver archive are not required for this small test.
 - 64 GB system RAM recommended for training;
 - a CUDA-capable GPU is strongly recommended for training.
 
+A GPU is not required for inference. At least 16 GB system RAM is recommended
+for complete global-field generation. On the tested Intel Core Ultra 9 285K
+CPU, a 251,100-point field required approximately 103 seconds end to end.
+
 ## Python environment
 
 ```bash
@@ -52,12 +56,16 @@ feature_generator/target/aether-p3-feature-generator-1.0.0.jar
 
 ## External data
 
-The repository includes Orekit auxiliary data and the space-weather files that
-fit ordinary GitHub storage. Add the two larger required files, `AE.csv` and
-`solarwind.csv`, under `data/space-weather`. Both runtime locations are
-declared in `config/production.json`. Product definitions and authoritative
-sources are listed in [`DATA_SOURCES.md`](DATA_SOURCES.md). Run
-`scripts/run_checks.sh` after installation.
+Third-party driver and Orekit data are not redistributed in this repository.
+Follow [`RUNTIME_DATA_SETUP.md`](RUNTIME_DATA_SETUP.md), place the locally
+obtained files at the paths declared in `config/production.json`, and run:
+
+```bash
+python scripts/check_runtime_data.py
+```
+
+The one-command preprocessed example remains available without these external
+files.
 
 ## Runtime verification
 

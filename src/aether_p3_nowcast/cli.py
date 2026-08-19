@@ -51,13 +51,13 @@ def parser() -> argparse.ArgumentParser:
 
     audit = commands.add_parser(
         "audit-runs",
-        help="Repeat the validation-only seed selection audit.",
+        help="Repeat the validation-only seed-candidate audit.",
     )
     audit.add_argument("--output-root", type=Path, required=True)
 
     install = commands.add_parser(
         "install-model",
-        help="Install the validation-selected deployment artifacts.",
+        help="Install the validation-selected candidate artifacts.",
     )
     install.add_argument("--output-root", type=Path, required=True)
     install.add_argument("--dataset-root", type=Path, required=True)
@@ -129,7 +129,7 @@ def main() -> None:
             "parameter_count": model.count_params(),
             "training_rows": int(metadata["splits"]["train"]["records"]),
             "validation_rows": int(metadata["splits"]["val"]["records"]),
-            "formal_tests_used": False,
+            "evaluation_benchmarks_used": False,
         }
         print(json.dumps(report, indent=2))
         return

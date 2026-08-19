@@ -9,6 +9,12 @@ feature_generator/target/
 /runs/
 /output/
 *.tmp
-data/space-weather/AE.csv
-data/space-weather/solarwind.csv
-data/orekit-data/.git/
+# Third-party runtime products are obtained directly from their providers and
+# remain local. Only repository-authored setup documentation is tracked.
+data/space-weather/*
+!data/space-weather/README.md
+data/orekit-data/*
+!data/orekit-data/README.md
+
+# Local CCMC report; maintained outside the published code repository.
+docs/report_2026_08_18_CCMC.tex

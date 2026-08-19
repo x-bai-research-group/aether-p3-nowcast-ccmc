@@ -7,6 +7,7 @@ if [[ $# -ne 2 ]]; then
 fi
 
 cd "$(dirname "$0")/.."
+python scripts/check_runtime_data.py
 aether-p3-nowcast grid \
   --config config/production.json \
   --utc "$1" \

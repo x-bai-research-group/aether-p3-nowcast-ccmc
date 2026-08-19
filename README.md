@@ -5,6 +5,11 @@ near-real-time estimation of density and predictive uncertainty. It combines
 the current location and time, causal solar and geomagnetic histories, solar
 wind conditions, and two empirical-density references.
 
+**Model owner/scientific contact:** Xiaoli Bai
+([xiaoli.bai@rutgers.edu](mailto:xiaoli.bai@rutgers.edu))<br>
+**Technical contact:** Ruochen Wang
+([ruo.chen.wang@rutgers.edu](mailto:ruo.chen.wang@rutgers.edu))
+
 The model uses 342 physical inputs divided into six groups:
 
 | input group | shape | dimensions |
@@ -62,9 +67,30 @@ The example evaluates eight grid points using the release model weights,
 training normalization, and a committed array of 342-dimensional preprocessed
 model inputs. No third-party source records are redistributed with this test.
 The production `grid` command separately constructs the same input contract
-from the complete operational driver archive.
+from a complete, locally supplied driver archive.
 
-## Scientific attribution
+## Scientific publications describing the AETHER-P3 framework
+
+- Wang, Y., and Bai, X. (2024),
+  [*A Global Thermospheric Density Prediction Framework Based on a Deep
+  Evidential Method*](https://doi.org/10.1029/2024SW004070), *Space Weather*,
+  22(12), e2024SW004070.
+- Wang, R., and Bai, X. (2026),
+  [*A Machine-Learning-Based Global Thermospheric Density Forecasting
+  Model*](https://doi.org/10.1029/2026SW004968), *Space Weather*, 24(6),
+  e2026SW004968.
+
+The CCMC nowcast v1.0.0 documented in this repository is an evolved,
+delivery-oriented implementation of the AETHER-P3 framework and is not
+identical to the model configurations reported in those publications.
+
+Within each trained seed, the checkpoint was selected only by the validation
+EDL objective. The release realization (seed 20) was then chosen through a
+balanced comparison across the trained seeds, including the documented
+evaluation benchmark cases. These two selection stages are recorded
+separately in `model/metadata.json`.
+
+## Supporting methods and models
 
 The uncertainty formulation, empirical density inputs, and orbital-environment
 calculations build on the following work:
@@ -84,8 +110,13 @@ calculations build on the following work:
   used for time scales, reference frames, Sun position, and the local JB2008
   and NRLMSISE-00 evaluations.
 
-Authoritative sources for the satellite density observations and operational
-space-weather drivers are listed in
+## Driver data sources used in the current research implementation
+
+Operational data sources, publication latency, and real-time lookup policies
+will be finalized in coordination with CCMC during model onboarding.
+
+Authoritative sources for the satellite density observations and research
+driver products are listed in
 [`docs/DATA_SOURCES.md`](docs/DATA_SOURCES.md).
 
 ## Manual installation
@@ -104,21 +135,27 @@ mvn -q test package
 cd ..
 ```
 
-Manual installation and production use require the complete runtime driver
-archive. The repository includes the model weights, normalization, Orekit
-auxiliary data, and space-weather files that are below GitHub's individual-file
-limit. Two high-resolution files are too large for ordinary GitHub storage and
-must be placed under `data/space-weather`:
+Manual production use requires locally supplied third-party driver and Orekit
+data. These files are not redistributed by this repository. Follow
+[`docs/RUNTIME_DATA_SETUP.md`](docs/RUNTIME_DATA_SETUP.md), then verify the
+local installation with:
 
-```text
-AE.csv
-solarwind.csv
+```bash
+python scripts/check_runtime_data.py
 ```
 
-Their authoritative sources and expected roles are documented in
-[`docs/DATA_SOURCES.md`](docs/DATA_SOURCES.md). The exact filenames and causal
-latencies are listed in
+The exact filenames and causal treatment are also summarized in
 [`docs/INPUTS_AND_LATENCY.md`](docs/INPUTS_AND_LATENCY.md).
+
+## Inference requirements
+
+A GPU is not required for frozen-model inference. The production path has been
+tested on Ubuntu 24.04 with an Intel Core Ultra 9 285K, 64 GB RAM, and an
+NVIDIA GeForce RTX 5090; 16 GB RAM is recommended for complete global-field
+generation. On the tested CPU, one standard 31 × 90 × 90 field (251,100
+points) required approximately 103 seconds end to end, including driver
+feature generation, JB2008 and NRLMSISE-00 evaluation, neural-network
+inference, and NetCDF writing. Hardware and driver I/O can change this time.
 
 ## Additional checks
 

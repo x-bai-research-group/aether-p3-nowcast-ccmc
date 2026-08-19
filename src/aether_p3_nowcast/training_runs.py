@@ -71,8 +71,8 @@ def run(
         "seeds": list(seeds),
         "dataset_root": str(dataset_root),
         "checkpoint_rule": "minimum validation-panel-balanced full NIG-EDL loss",
-        "deployment_seed_rule": "minimum selected validation EDL loss",
-        "formal_tests_used": False,
+        "validation_candidate_rule": "minimum selected validation EDL loss",
+        "evaluation_benchmarks_used": False,
     }
     manifest_path = output_root / "training_runs_manifest.json"
     if manifest_path.is_file() and _load(manifest_path) != training_run_manifest:
@@ -143,11 +143,11 @@ def run(
 
 
 def audit(output_root: Path) -> dict:
-    """Select one deployment seed without reading any formal-test result."""
+    """Identify a validation-preferred seed without reading benchmark cases."""
     output_root = Path(output_root).resolve()
     training_run_manifest = _load(output_root / "training_runs_manifest.json")
     seeds = tuple(int(seed) for seed in training_run_manifest.get("seeds", []))
-    if not seeds or training_run_manifest.get("formal_tests_used") is not False:
+    if not seeds or training_run_manifest.get("evaluation_benchmarks_used") is not False:
         raise RuntimeError("training-run manifest is invalid")
     run_summaries = []
     common_training_configuration = None
@@ -158,8 +158,10 @@ def audit(output_root: Path) -> dict:
         validation_report = _load(
             output_root / "validation" / f"seed{seed}" / "validation_metrics.json"
         )
-        if validation_report.get("formal_tests_read") is not False:
-            raise RuntimeError(f"seed {seed} validation read formal tests")
+        if validation_report.get("evaluation_benchmarks_read") is not False:
+            raise RuntimeError(
+                f"seed {seed} validation read evaluation benchmarks"
+            )
         shared_configuration = dict(training_audit["configuration"])
         shared_configuration.pop("seed")
         shared_configuration.pop("run_dir")
@@ -184,9 +186,9 @@ def audit(output_root: Path) -> dict:
         key=lambda run_summary: run_summary["validation_edl_loss"],
     )
     selection_report = {
-        "status": "DEPLOYMENT_SEED_SELECTED_BY_VALIDATION",
-        "formal_tests_used": False,
-        "selection_rule": training_run_manifest["deployment_seed_rule"],
+        "status": "VALIDATION_CANDIDATE_SELECTED",
+        "evaluation_benchmarks_used": False,
+        "selection_rule": training_run_manifest["validation_candidate_rule"],
         "selected": selected_run,
         "runs": run_summaries,
     }
@@ -197,9 +199,9 @@ def audit(output_root: Path) -> dict:
     lines = [
         "# AETHER-P3 Nowcast training-run validation audit",
         "",
-        "> No formal-test result is read or used by this selection.",
+        "> No evaluation-benchmark result is read or used by this selection.",
         "",
-        f"- Selected seed: `{selected_run['seed']}`",
+        f"- Validation-preferred seed: `{selected_run['seed']}`",
         f"- Selected epoch: `{selected_run['selected_epoch']}`",
         f"- Validation EDL loss: `{selected_run['validation_edl_loss']:.8f}`",
         "",
@@ -234,10 +236,10 @@ def install(output_root: Path, dataset_root: Path, model_root: Path) -> None:
     model_root = Path(model_root).resolve()
     selection = _load(output_root / "training_runs_audit.json")
     if (
-        selection.get("status") != "DEPLOYMENT_SEED_SELECTED_BY_VALIDATION"
-        or selection.get("formal_tests_used") is not False
+        selection.get("status") != "VALIDATION_CANDIDATE_SELECTED"
+        or selection.get("evaluation_benchmarks_used") is not False
     ):
-        raise RuntimeError("deployment selection is not validation-only")
+        raise RuntimeError("candidate selection is not validation-only")
     selected = selection["selected"]
     checkpoint = Path(selected["checkpoint"])
     if not checkpoint.is_file():
@@ -266,7 +268,12 @@ def install(output_root: Path, dataset_root: Path, model_root: Path) -> None:
         "selected_seed": int(selected["seed"]),
         "selected_epoch": int(selected["selected_epoch"]),
         "selected_validation_edl_loss": float(selected["validation_edl_loss"]),
-        "selection_used_formal_tests": False,
+        "checkpoint_selection_used_evaluation_benchmarks": False,
+        "evaluation_benchmark_case_count": 12,
+        "release_realization_selection": {
+            "method": "minimum validation EDL loss across trained seeds",
+            "used_evaluation_benchmarks": False,
+        },
         "network": _load(output_root / "configs" / f"seed{selected['seed']}.json")[
             "network"
         ],

@@ -248,7 +248,7 @@ def train(config_path: Path) -> dict:
         "selected_validation_panel_edl_loss": best_validation_loss,
         "checkpoint": str(best_checkpoint),
         "checkpoint_rule": "minimum validation-panel-balanced full NIG-EDL loss",
-        "formal_tests_used": False,
+        "evaluation_benchmarks_used": False,
         "output": ["gamma", "nu", "alpha", "beta"],
     }
     (run_dir / "TRAINING_AUDIT.json").write_text(

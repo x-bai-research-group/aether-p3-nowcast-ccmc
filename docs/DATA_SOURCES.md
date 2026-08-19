@@ -16,7 +16,14 @@ drivers, empirical references, and auxiliary data used by AETHER-P3 Nowcast.
 The ESA Swarm links use browser-side fragment routes and should be opened in a
 web browser.
 
-## Operational space-weather drivers
+## Driver data sources used in the current research implementation
+
+Operational data sources, publication latency, and real-time lookup policies
+will be finalized in coordination with CCMC during model onboarding.
+
+The files named below are obtained or prepared locally and are not
+redistributed by this repository. See
+[`RUNTIME_DATA_SETUP.md`](RUNTIME_DATA_SETUP.md) for installation details.
 
 | local product | model variables | authoritative source |
 |---|---|---|
