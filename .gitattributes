@@ -1,4 +1,5 @@
 data/orekit-data/** -text -diff
+data/orekit-data/README.md text diff
 data/space-weather/** -text -diff
 examples/output/*.nc -text -diff
 model/*.h5 -text -diff

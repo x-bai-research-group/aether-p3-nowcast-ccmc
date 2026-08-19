@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "aether-p3-nowcast"
-version = "1.0.0rc1"
+version = "1.0.0"
 description = "Global thermospheric density nowcasting with predictive uncertainty"
 readme = "README.md"
 requires-python = ">=3.11,<3.13"
-license = {text = "License pending institutional review"}
+license = {text = "MIT"}
 authors = [{name = "AETHER-P3 Nowcast developers"}]
 dependencies = [
   "numpy>=2.0,<2.1",
