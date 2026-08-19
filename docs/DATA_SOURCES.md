@@ -18,8 +18,8 @@ web browser.
 
 ## Driver data sources used in the current research implementation
 
-Operational data sources, publication latency, and real-time lookup policies
-will be finalized in coordination with CCMC during model onboarding.
+Real-time data sources, publication latency, and update policies are
+deployment-specific and are not fixed by this research release.
 
 The files named below are obtained or prepared locally and are not
 redistributed by this repository. See
@@ -31,7 +31,7 @@ schemas and temporal assembly rules.
 |---|---|---|
 | `solarwind.csv` | GSM Bz, solar-wind speed, and proton number density | [NASA SPDF OMNIWeb data documentation](https://omniweb.gsfc.nasa.gov/html/ow_data.html); use the high-resolution OMNI product |
 | `DST.csv` or `DST.txt` | hourly Dst | [WDC for Geomagnetism, Kyoto: hourly Dst data](https://wdc.kugi.kyoto-u.ac.jp/dstae/index.html) |
-| `AE.csv` or `AE.txt` | AE in the fast history and hourly AE in the long history | [WDC for Geomagnetism, Kyoto: hourly Dst and AE data](https://wdc.kugi.kyoto-u.ac.jp/dstae/index.html) |
+| `AE.csv` or `AE.txt` | AE in the fast history and hourly AE in the long history | Acquired through the [NASA SPDF high-resolution OMNI product](https://omniweb.gsfc.nasa.gov/html/ow_data.html); the AE index distributed by OMNI originates from the [WDC for Geomagnetism, Kyoto](https://wdc.kugi.kyoto-u.ac.jp/aedir/) |
 | `Apo30.csv` | completed half-hour ap30 interval | [GFZ Hp30/Hp60 and linear ap30/ap60 data](https://kp.gfz.de/en/hp30-hp60) |
 | `SW-All.txt` | previous-day observed F10.7, trailing 81-day F10.7, daily Ap, and 3-hour Ap required by NRLMSISE-00 | [CelesTrak SW-All data](https://celestrak.org/SpaceData/SW-All.txt) and [format documentation](https://celestrak.org/SpaceData/SpaceWx-format.php) |
 | `SOLFSMY.TXT` | causal F10, S10, M10, and Y10 solar-proxy history; JB2008 inputs | [SET JB2008 current indices](https://sol.spacenvironment.net/JB2008/indices.html) |
@@ -43,7 +43,7 @@ schemas and temporal assembly rules.
 | component | role | authoritative source |
 |---|---|---|
 | JB2008 | current-location empirical density input | [SET JB2008 indices and model resources](https://sol.spacenvironment.net/JB2008/indices.html) |
-| NRLMSISE-00 | current-location empirical density input | [NASA CCMC NRLMSISE-00 description](https://ccmc.gsfc.nasa.gov/models/NRLMSIS~00/) |
+| NRLMSISE-00 | current-location empirical density input | [Picone et al. (2002), NRLMSISE-00 model description](https://doi.org/10.1029/2002JA009430) |
 | Orekit data | Earth orientation, time scales, and reference-frame support | [Official Orekit 13.1.4 downloads and data instructions](https://www.orekit.org/site-orekit-13.1.4/downloads.html) |
 
 JB2008 and NRLMSISE-00 densities are evaluated locally through Orekit; they are
@@ -71,6 +71,20 @@ Ap30, AE, the separate hourly Dst file, OMNI solar-wind variables, and F30 do
 not enter either Orekit empirical-model calculation. They are separate neural-
 network drivers. JB2008 uses DTC from `DTCFILE.TXT`; NRLMSISE-00 uses the Ap
 values in `SW-All.txt`.
+
+The research AE table is a frozen, locally retained snapshot extracted through
+OMNI. OMNI does not independently derive AE: it distributes values supplied by
+WDC Kyoto. Final, provisional, and quick-look AE releases can be revised or
+become available at different times, so a later download from either service
+is not assumed to be byte-for-byte identical to the snapshot used to assemble
+the model data.
+
+The frozen research solar-wind table is also a locally preprocessed product.
+Flagged or missing OMNI values in the magnetic-field and plasma columns were
+filled by linear interpolation during construction of that table. This driver
+preprocessing is distinct from the density-label policy: accelerometer-derived
+density observations were not linearly interpolated to create supervised
+targets.
 
 The trailing F10.7 average is a deliberate causal nowcast choice. The
 conventional retrospective NRLMSISE-00 specification uses a centered 81-day

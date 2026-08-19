@@ -20,7 +20,14 @@ The model consumes 342 values grouped by physical role.
 - AE, Bz, speed, and proton density use the most recent causal observation no
   more than five minutes old.
 - Missing required drivers cause the inference request to fail rather than
-  silently using future data or unconstrained interpolation.
+  applying additional interpolation at request time.
+
+The supplied frozen `solarwind.csv` is a preprocessed research product: its
+flagged or missing OMNI magnetic-field and plasma values were filled by linear
+interpolation before the Java runtime stage. The five-minute lookup policy is
+causal with respect to that fixed local table; it does not describe how the
+historical table itself was prepared. See
+[`DRIVER_PREPROCESSING.md`](DRIVER_PREPROCESSING.md).
 
 ## Required runtime files
 

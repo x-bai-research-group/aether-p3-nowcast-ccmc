@@ -15,7 +15,7 @@ The runtime archive contains two distinct classes of files.
 |---|---|---|
 | provider-format daily tables | `SOLFSMY.TXT`, `DTCFILE.TXT`, `SW-All.txt` | Retained in the provider's numeric row layout; comments and nonnumeric header rows are ignored by the reader. |
 | provider-style daily F30 archive | `radio_flux_adjusted.txt` | Daily rows are indexed by UTC date. The model reads year, month, day, and adjusted F30 from the first five columns. |
-| locally assembled UTC tables | `DST.csv`, `Apo30.csv`, `AE.csv`, `solarwind.csv` | Provider exports covering the required years are placed in one chronological table per product and converted to the canonical schemas below. Sources are not averaged together. |
+| locally assembled UTC tables | `DST.csv`, `Apo30.csv`, `AE.csv`, `solarwind.csv` | Provider exports covering the required years are placed in one chronological table per product and converted to the canonical schemas below. AE is extracted through the NASA SPDF OMNI product and retains WDC Kyoto as its original index attribution. The solar-wind table includes the historical interpolation described below. Sources are not averaged together. |
 
 Each product remains in its own file. The files are not row-wise merged into a
 single master table. `WeatherStore` performs the cross-product join at model
@@ -49,9 +49,17 @@ value at the start of its UTC hour.
 year,day_of_year,hour,minute,AE_nT
 ```
 
-Rows are constructed from the WDC Kyoto AE record without additional temporal
-averaging during local format conversion. The loader retains finite values in
-the range `0 <= AE < 99999` nT.
+Rows in the research snapshot are extracted from the AE field distributed by
+the NASA SPDF high-resolution OMNI product. OMNI obtains the index from WDC
+Kyoto; it does not independently calculate a second AE index. Local conversion
+does not add temporal averaging. The loader retains finite values in the range
+`0 <= AE < 99999` nT.
+
+AE release versions are material provenance. Depending on date, OMNI and WDC
+Kyoto may provide final, provisional, or quick-look values, and later revisions
+need not be numerically identical. The model-data assembly therefore uses one
+locally frozen OMNI-derived AE snapshot rather than mixing downloads or release
+versions.
 
 ### Minute solar wind
 
@@ -68,6 +76,22 @@ columns are retained to preserve the established column positions but are
 ignored by AETHER-P3. A row is rejected unless all three used values are
 finite and satisfy `abs(Bz) < 1000 nT`, `0 < speed < 5000 km/s`, and
 `0 <= proton density < 1000 cm^-3`.
+
+Before export to the frozen research CSV, the source files were concatenated
+in chronological one-minute order. For every OMNI data column from column 5
+through column 13, the historical preparation script treated values greater
+than 999 as invalid and replaced them with one-dimensional linear interpolation
+over row time. Linear extrapolation was used at an outer boundary when needed.
+Consequently, the Bz, speed, and proton-density values consumed by the model
+can contain offline interpolated values. This operation was performed once
+when the frozen research driver archive was assembled; it is not performed by
+the Java feature generator at request time.
+
+This section records the procedure actually used for the released model. It
+should not be interpreted as a general recommendation to treat every physical
+value above 999 as invalid. In particular, a future operational preprocessing
+policy should use each OMNI field's documented fill value and should be
+validated before replacing the frozen research archive.
 
 ### Half-hour ap30
 
@@ -118,19 +142,24 @@ Forty-five hourly states cover query time minus 48 hours through query time
 minus 4 hours. Each state contains AE and Dst. AE retains the same five-minute
 maximum causal age; Dst uses its hourly UTC value.
 
-## Missing values and interpolation
+## Runtime missing values and interpolation boundary
 
-The production assembler does not linearly interpolate, average across
-providers, or look forward in time. If a required daily value, hourly value,
-completed ap30 interval, or recent minute observation is unavailable, field
-generation fails with the missing UTC rather than silently substituting a
-future value. This behavior makes the assembled model input deterministic for
-a fixed set of local source files.
+The Java production assembler does not perform additional linear
+interpolation, average across providers, or look forward beyond the values
+already present in a supplied local table. If a required daily value, hourly
+value, completed ap30 interval, or recent minute observation is unavailable in
+those tables, field generation fails with the missing UTC. This runtime rule
+does not undo or contradict the offline linear interpolation already embedded
+in the frozen `solarwind.csv` research product.
+
+Density labels follow a separate rule. Accelerometer-derived density
+observations are retained as observations and are not replaced by linearly
+interpolated density targets.
 
 ## Reproduction boundary
 
 The repository specifies the accepted local schemas, source-variable choices,
 validity checks, units, and temporal join exactly. Provider download dates and
 local archive versions are not frozen in version 1.0.0. Operational source
-selection, publication latency, and automated acquisition will be finalized
-with CCMC during onboarding.
+selection, publication latency, and automated acquisition are outside the
+scope of this research release.

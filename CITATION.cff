@@ -4,7 +4,6 @@ message: "Please cite the preferred scientific publication and this software rel
 type: software
 version: 1.0.0
 date-released: 2026-08-19
-repository-code: "https://github.com/x-bai-research-group/aether-p3-nowcast-ccmc"
 license: MIT
 authors:
   - family-names: Wang

@@ -16,5 +16,5 @@ data/space-weather/*
 data/orekit-data/*
 !data/orekit-data/README.md
 
-# Local CCMC report; maintained outside the published code repository.
-docs/report_2026_08_18_CCMC.tex
+# Local reports maintained outside the published code repository.
+docs/report_*.tex

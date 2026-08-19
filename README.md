@@ -80,9 +80,9 @@ from a complete, locally supplied driver archive.
   Model*](https://doi.org/10.1029/2026SW004968), *Space Weather*, 24(6),
   e2026SW004968.
 
-The CCMC nowcast v1.0.0 documented in this repository is an evolved,
-delivery-oriented implementation of the AETHER-P3 framework and is not
-identical to the model configurations reported in those publications.
+AETHER-P3 Nowcast v1.0.0 is an evolved implementation of the AETHER-P3
+framework and is not identical to the model configurations reported in those
+publications.
 
 Within each trained seed, the checkpoint was selected only by the validation
 EDL objective. The release realization (seed 20) was then chosen through a
@@ -131,8 +131,8 @@ calculations build on the following work:
 
 ## Driver data sources used in the current research implementation
 
-Operational data sources, publication latency, and real-time lookup policies
-will be finalized in coordination with CCMC during model onboarding.
+Real-time data sources, publication latency, and update policies are
+deployment-specific and are not fixed by this research release.
 
 Authoritative sources for the satellite density observations and research
 driver products are listed in

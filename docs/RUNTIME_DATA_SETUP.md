@@ -7,8 +7,8 @@ and comply with the applicable provider terms.
 
 ## Driver data sources used in the current research implementation
 
-Operational data sources, publication latency, and real-time lookup policies
-will be finalized in coordination with CCMC during model onboarding.
+Real-time data sources, publication latency, and update policies are
+deployment-specific and are not fixed by this research release.
 
 Place the following files under `data/space-weather/`:
 
@@ -20,12 +20,18 @@ Place the following files under `data/space-weather/`:
 | `radio_flux_adjusted.txt` | Obtain adjusted F30 data from the [CLS Solar Radio Flux service](https://spaceweather.cls.fr/services/radioflux/). The feature generator reads year, month, day, and adjusted F30 from the provider-style daily table. |
 | `DST.csv` or `DST.txt` | Obtain hourly Dst from [WDC Kyoto](https://wdc.kugi.kyoto-u.ac.jp/dstae/index.html) and export UTC plus Dst in one of the formats accepted by `WeatherStore`. |
 | `Apo30.csv` | Obtain linear ap30 from [GFZ](https://kp.gfz.de/en/hp30-hp60). The research file stores year, month, day, interval start/end, and ap30 in column 9. |
-| `AE.csv` or `AE.txt` | Obtain AE from [WDC Kyoto](https://wdc.kugi.kyoto-u.ac.jp/dstae/index.html). The research CSV columns are year, day of year, hour, minute, and AE. |
-| `solarwind.csv` | Obtain high-resolution OMNI data from [NASA SPDF OMNIWeb](https://omniweb.gsfc.nasa.gov/html/ow_data.html). The research CSV contains year, day of year, hour, minute, and the downloaded OMNI columns; the generator reads GSM Bz, speed, and proton density from columns 8, 9, and 13. |
+| `AE.csv` or `AE.txt` | Obtain the AE field through the [NASA SPDF high-resolution OMNI product](https://omniweb.gsfc.nasa.gov/html/ow_data.html). OMNI distributes AE values originating from [WDC Kyoto](https://wdc.kugi.kyoto-u.ac.jp/aedir/). The research CSV columns are year, day of year, hour, minute, and AE. |
+| `solarwind.csv` | Obtain high-resolution OMNI data from [NASA SPDF OMNIWeb](https://omniweb.gsfc.nasa.gov/html/ow_data.html). The research CSV contains year, day of year, hour, minute, and the selected OMNI columns after the historical linear interpolation described in `DRIVER_PREPROCESSING.md`; the generator reads GSM Bz, speed, and proton density from columns 8, 9, and 13. |
 
 The first four products are consumed in provider-style formats. The remaining
 research CSV files are local preprocessing products and are not presented as
 provider-issued operational files.
+
+Use one frozen AE snapshot consistently for data generation and inference.
+Final, provisional, and quick-look AE versions can differ, and OMNI and WDC
+Kyoto may expose those versions on different schedules. Re-downloading AE at a
+later date therefore does not guarantee values identical to the research
+snapshot.
 
 The exact canonical columns, retained source fields, validity filters, and UTC
 assembly rules for these local products are defined in
