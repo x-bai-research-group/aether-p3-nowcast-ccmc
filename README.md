@@ -164,5 +164,4 @@ aether-p3-nowcast check --dataset-root /path/to/training_dataset
 scripts/run_training.sh /path/to/training_dataset runs/training
 ```
 
-The default `config/seeds.json` trains seed 20. The same interface accepts a
-list of seeds when independent training runs are required.
+The default `config/seeds.json` sets the training random seed to 20.
