@@ -30,9 +30,11 @@ To measure the neural-network component on the installation hardware, run the
 same frozen-input benchmark once with the GPU hidden and once with GPU 0:
 
 ```bash
-CUDA_VISIBLE_DEVICES=-1 python scripts/benchmark_model_inference.py \
+env PYTHONPATH=src CUDA_VISIBLE_DEVICES=-1 \
+  python scripts/benchmark_model_inference.py \
   --output benchmark_cpu.json
-CUDA_VISIBLE_DEVICES=0 python scripts/benchmark_model_inference.py \
+env PYTHONPATH=src CUDA_VISIBLE_DEVICES=0 \
+  python scripts/benchmark_model_inference.py \
   --output benchmark_gpu.json
 ```
 
@@ -48,13 +50,15 @@ directories:
 mkdir -p runs/runtime_benchmark/cpu runs/runtime_benchmark/gpu
 /usr/bin/time -f "elapsed_seconds=%e peak_memory_kb=%M" \
   -o runs/runtime_benchmark/cpu_time.txt \
-  env CUDA_VISIBLE_DEVICES=-1 aether-p3-nowcast grid \
+  env PYTHONPATH=src CUDA_VISIBLE_DEVICES=-1 \
+  python -m aether_p3_nowcast grid \
   --config config/production.json \
   --utc 2024-05-11T12:00:00Z \
   --output-dir runs/runtime_benchmark/cpu
 /usr/bin/time -f "elapsed_seconds=%e peak_memory_kb=%M" \
   -o runs/runtime_benchmark/gpu_time.txt \
-  env CUDA_VISIBLE_DEVICES=0 aether-p3-nowcast grid \
+  env PYTHONPATH=src CUDA_VISIBLE_DEVICES=0 \
+  python -m aether_p3_nowcast grid \
   --config config/production.json \
   --utc 2024-05-11T12:00:00Z \
   --output-dir runs/runtime_benchmark/gpu
