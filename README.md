@@ -90,6 +90,24 @@ balanced comparison across the trained seeds, including the documented
 evaluation benchmark cases. These two selection stages are recorded
 separately in `model/metadata.json`.
 
+## Release traceability
+
+| item | release value |
+|---|---|
+| software version | AETHER-P3 Nowcast v1.0.0 |
+| canonical tag | `v1.0.0` |
+| trained checkpoint | `model/model.weights.h5` |
+| checkpoint SHA-256 | `eecc45f27e5fc40d80f74f1b2cc2c803f5c6d7dc6174ee17ae4225ffddec8a04` |
+| supported Python | 3.11 or 3.12 |
+| tested Python | 3.12.7 |
+| TensorFlow dependency | 2.18 or newer, below 2.21 |
+| tested operating system | Ubuntu 24.04 x86-64 |
+
+The annotated `v1.0.0` tag is the authoritative link to the exact Git commit
+used for this release. After cloning, resolve it with
+`git rev-parse v1.0.0^{commit}`. The GitHub release page records the same
+commit and provides the fixed release artifact.
+
 ## Supporting methods and models
 
 The uncertainty formulation, empirical density inputs, and orbital-environment
@@ -152,8 +170,9 @@ The exact filenames and causal treatment are also summarized in
 A GPU is not required for frozen-model inference. The production path has been
 tested on Ubuntu 24.04 with an Intel Core Ultra 9 285K, 64 GB RAM, and an
 NVIDIA GeForce RTX 5090; 16 GB RAM is recommended for complete global-field
-generation. On the tested CPU, one standard 31 × 90 × 90 field (251,100
-points) required approximately 103 seconds end to end, including driver
+generation. Warm neural-network inference for one preprocessed point required
+approximately 0.4 seconds on the tested CPU. One standard 31 × 90 × 90 field
+(251,100 points) required approximately 103 seconds end to end, including driver
 feature generation, JB2008 and NRLMSISE-00 evaluation, neural-network
 inference, and NetCDF writing. Hardware and driver I/O can change this time.
 

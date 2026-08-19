@@ -5,7 +5,8 @@ The deployment bundle contains the frozen AETHER-P3 Nowcast model:
 - `model.weights.h5`: deployed AETHER-P3 Nowcast weights;
 - `normalization.npz`: training-only feature and target normalization;
 - `metadata.json`: architecture, input contract, selected seed, validation
-  objective, training-data scope, and release version;
+  objective, training-data scope, release version, checkpoint filename, and
+  checkpoint SHA-256;
 - `dataset_metadata.json`: immutable source dataset contract and split counts.
 
 The checkpoint was selected by validation panel-balanced EDL loss within its

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import shutil
 from pathlib import Path
@@ -259,6 +260,10 @@ def install(output_root: Path, dataset_root: Path, model_root: Path) -> None:
         raise FileExistsError(f"deployment artifacts already exist: {existing}")
     for destination, source in destinations.items():
         shutil.copy2(source, destination)
+    checkpoint_filename = "model.weights.h5"
+    checkpoint_sha256 = hashlib.sha256(
+        (model_root / checkpoint_filename).read_bytes()
+    ).hexdigest()
     metadata = {
         "model_name": MODEL_NAME,
         "model_version": MODEL_VERSION,
@@ -268,6 +273,8 @@ def install(output_root: Path, dataset_root: Path, model_root: Path) -> None:
         "selected_seed": int(selected["seed"]),
         "selected_epoch": int(selected["selected_epoch"]),
         "selected_validation_edl_loss": float(selected["validation_edl_loss"]),
+        "checkpoint_filename": checkpoint_filename,
+        "checkpoint_sha256": checkpoint_sha256,
         "checkpoint_selection_used_evaluation_benchmarks": False,
         "evaluation_benchmark_case_count": 12,
         "release_realization_selection": {

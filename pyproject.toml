@@ -9,7 +9,10 @@ description = "Global thermospheric density nowcasting with predictive uncertain
 readme = "README.md"
 requires-python = ">=3.11,<3.13"
 license = {text = "MIT"}
-authors = [{name = "AETHER-P3 Nowcast developers"}]
+authors = [
+  {name = "Ruochen Wang", email = "ruo.chen.wang@rutgers.edu"},
+  {name = "Xiaoli Bai", email = "xiaoli.bai@rutgers.edu"},
+]
 dependencies = [
   "numpy>=2.0,<2.1",
   "scipy>=1.14,<1.17",
