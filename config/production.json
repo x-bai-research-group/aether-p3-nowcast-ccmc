@@ -1,6 +1,6 @@
 {
   "model_name": "AETHER-P3 Nowcast",
-  "model_version": "1.0.0-rc1",
+  "model_version": "1.0.0",
   "feature_contract": "aether-p3-nowcast-342-v1",
   "bundle_root": "..",
   "space_weather_root": "data/space-weather",
