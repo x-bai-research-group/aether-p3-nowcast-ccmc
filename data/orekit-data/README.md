@@ -7,7 +7,7 @@ place the following files at the paths shown below.
 
 ## Required files
 
-- `tai-utc.dat`: UTC--TAI and leap-second history.
+- `tai-utc.dat`: UTC–TAI and leap-second history.
 - `itrf-versions.conf`: ITRF-version configuration for IERS Earth-orientation
   records.
 - `Earth-Orientation-Parameters/IAU-2000/finals2000A.all`: IAU-2000 Earth

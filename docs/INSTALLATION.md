@@ -1,78 +1,35 @@
 # Installation
 
-## One-command reference installation
+## Reference example
 
-On Linux with Conda available, the recommended first run is:
+On Linux with Conda installed, the shortest complete test is:
 
 ```bash
 ./scripts/run_example.sh
 ```
 
-This creates the declared environment when necessary, installs the package,
-runs the frozen model with the committed preprocessed input fixture, and
-verifies the resulting NetCDF against the reference output. The Java feature
-generator and production driver archive are not required for this small test.
+The script creates the declared environment when necessary, installs the
+package, evaluates the released model on included preprocessed inputs, writes a
+small NetCDF file, and compares it with the included reference.
 
-## System requirements
+This example does not require the Java feature generator or third-party driver
+files.
+
+## Requirements
 
 - Linux x86-64;
 - Python 3.11 or 3.12;
 - Java Development Kit 17 or newer;
 - Maven 3.8 or newer;
-- 64 GB system RAM recommended for training;
-- a CUDA-capable GPU is strongly recommended for training.
+- at least 16 GB RAM recommended for global-field inference;
+- 64 GB RAM and a CUDA-capable GPU recommended for training.
 
-A GPU is not required for inference. At least 16 GB system RAM is recommended
-for complete global-field generation. On the tested Intel Core Ultra 9 285K
-and NVIDIA RTX 5090 system, a 251,100-point production field required 102.46
-seconds with the GPU hidden and 26.83 seconds with GPU inference enabled. The
-corresponding model-only times were 84.41 and 7.31 seconds. Full protocol and
-environment details are recorded in
-[`benchmarks/runtime_2026-08-19.json`](benchmarks/runtime_2026-08-19.json).
+A GPU is optional for inference. On the reference system, a complete
+251,100-point field required approximately 102 s on CPU and 27 s with an
+NVIDIA RTX 5090. These times include feature generation, empirical-model
+evaluation, neural-network inference, and NetCDF writing.
 
-To measure the neural-network component on the installation hardware, run the
-same frozen-input benchmark once with the GPU hidden and once with GPU 0:
-
-```bash
-env PYTHONPATH=src CUDA_VISIBLE_DEVICES=-1 \
-  python scripts/benchmark_model_inference.py \
-  --output benchmark_cpu.json
-env PYTHONPATH=src CUDA_VISIBLE_DEVICES=0 \
-  python scripts/benchmark_model_inference.py \
-  --output benchmark_gpu.json
-```
-
-The benchmark reports warm single-point latency and batched inference for the
-251,100 points in the standard grid. It excludes Java feature construction,
-the two empirical-model calculations, and NetCDF writing; those steps remain
-part of the separately reported end-to-end field time.
-
-Measure the complete production path at the same UTC with separate output
-directories:
-
-```bash
-mkdir -p runs/runtime_benchmark/cpu runs/runtime_benchmark/gpu
-/usr/bin/time -f "elapsed_seconds=%e peak_memory_kb=%M" \
-  -o runs/runtime_benchmark/cpu_time.txt \
-  env PYTHONPATH=src CUDA_VISIBLE_DEVICES=-1 \
-  python -m aether_p3_nowcast grid \
-  --config config/production.json \
-  --utc 2024-05-11T12:00:00Z \
-  --output-dir runs/runtime_benchmark/cpu
-/usr/bin/time -f "elapsed_seconds=%e peak_memory_kb=%M" \
-  -o runs/runtime_benchmark/gpu_time.txt \
-  env PYTHONPATH=src CUDA_VISIBLE_DEVICES=0 \
-  python -m aether_p3_nowcast grid \
-  --config config/production.json \
-  --utc 2024-05-11T12:00:00Z \
-  --output-dir runs/runtime_benchmark/gpu
-```
-
-The GPU run accelerates the TensorFlow stage only. Java feature generation,
-JB2008, NRLMSISE-00, and NetCDF writing remain CPU operations, so the
-end-to-end speedup will be smaller than the neural-network-only speedup.
-
-## Python environment
+## Manual installation
 
 ```bash
 conda env create -f environment.yml
@@ -80,13 +37,7 @@ conda activate aether-p3-nowcast
 python -m pip install .
 ```
 
-To run the optional source-code tests, install the test dependency separately:
-
-```bash
-python -m pip install '.[test]'
-```
-
-## Feature generator
+Build the Java feature generator:
 
 ```bash
 cd feature_generator
@@ -94,27 +45,36 @@ mvn -q test package
 cd ..
 ```
 
-The expected executable is:
+The resulting executable is:
 
 ```text
 feature_generator/target/aether-p3-feature-generator-1.0.0.jar
 ```
 
-## External data
+## Scientific driver files
 
-Third-party driver and Orekit data are not redistributed in this repository.
-Follow [`RUNTIME_DATA_SETUP.md`](RUNTIME_DATA_SETUP.md), place the locally
-obtained files at the paths declared in `config/production.json`, and run:
+Obtain the external driver and Orekit files described in
+[Scientific driver data](RUNTIME_DATA_SETUP.md), then check their presence:
 
 ```bash
 python scripts/check_runtime_data.py
 ```
 
-The one-command preprocessed example remains available without these external
-files.
+## Verification
 
-## Runtime verification
+Run the Python and Java checks:
 
-Use the TensorFlow version declared by the environment and run the unit tests
-and one reference NetCDF generation after installing the package on a new
-system.
+```bash
+scripts/run_checks.sh
+```
+
+Generate one global field:
+
+```bash
+aether-p3-nowcast grid \
+  --config config/production.json \
+  --utc 2024-05-11T12:00:00Z \
+  --output-dir output
+```
+
+The UTC must lie on a five-minute boundary.

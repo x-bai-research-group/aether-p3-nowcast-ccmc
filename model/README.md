@@ -1,19 +1,19 @@
-# Model artifacts
+# Released model files
 
-The deployment bundle contains the frozen AETHER-P3 Nowcast model:
+This directory contains the AETHER-P3 Nowcast model and the quantities needed
+to reproduce its predictions:
 
-- `model.weights.h5`: deployed AETHER-P3 Nowcast weights;
-- `normalization.npz`: training-only feature and target normalization;
-- `metadata.json`: architecture, input contract, selected seed, validation
-  objective, training-data scope, release version, checkpoint filename, and
-  checkpoint SHA-256;
-- `dataset_metadata.json`: immutable source dataset contract and split counts.
+- `model.weights.h5`: neural-network weights;
+- `normalization.npz`: feature and target normalization calculated from the
+  training data;
+- `metadata.json`: model structure, input definition, selected random seed,
+  validation objective, data scope, software version, and weight checksum;
+- `dataset_metadata.json`: training and validation record counts and the
+  associated data definition.
 
 The checkpoint was selected by validation panel-balanced EDL loss within its
-training run. The 12 evaluation benchmark cases did not select or replace that
-within-run checkpoint. Their results were reviewed when seed 20 was chosen as
-the final deployed realization, so they are not described as an untouched
-independent test set for final realization selection. The frozen metadata
-records these two decisions separately: checkpoint selection excluded the
-evaluation benchmarks, whereas release realization selection used a balanced
-comparison across trained seeds.
+training run. The 12 evaluation benchmarks did not determine the checkpoint
+within any individual run. Their results were, however, considered together
+with validation behavior when seed 20 was selected from the trained random
+seeds. The benchmarks are therefore reported as evaluation cases rather than
+as an untouched independent test set for the final model choice.

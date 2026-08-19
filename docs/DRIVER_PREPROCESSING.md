@@ -1,165 +1,123 @@
-# Driver preprocessing and temporal assembly
+# Data preprocessing and temporal assembly
 
-This document defines how the research driver archive is converted into the
-342 model inputs. It is a data-format and causality contract, not a grant of
-permission to redistribute provider data. Reformatting, selecting columns, or
-combining date ranges does not remove the original provider's terms; the
-provider files and the locally assembled tables are therefore excluded from
-this repository.
+This document describes the transformations used to construct the model target
+and its 342 inputs. All times are interpreted in UTC.
 
-## Source-file classes
+## Density target
 
-The runtime archive contains two distinct classes of files.
+The target is accelerometer-derived neutral mass density. A valid satellite
+observation is associated with the nearest point on the 30-second data grid
+when it lies within the five-second matching tolerance. Density is not
+interpolated between satellite observations.
 
-| class | files | handling |
+The neural network is trained on normalized log-density,
+
+\[
+y=\frac{\log_{10}(\rho)-\mu_y}{\sigma_y},
+\]
+
+where \(\mu_y\) and \(\sigma_y\) are calculated only from the selected training
+records. Feature normalization is likewise calculated from training records
+only.
+
+## Driver preparation
+
+| quantity | native representation used by the model | preparation |
 |---|---|---|
-| provider-format daily tables | `SOLFSMY.TXT`, `DTCFILE.TXT`, `SW-All.txt` | Retained in the provider's numeric row layout; comments and nonnumeric header rows are ignored by the reader. |
-| provider-style daily F30 archive | `radio_flux_adjusted.txt` | Daily rows are indexed by UTC date. The model reads year, month, day, and adjusted F30 from the first five columns. |
-| locally assembled UTC tables | `DST.csv`, `Apo30.csv`, `AE.csv`, `solarwind.csv` | Provider exports covering the required years are placed in one chronological table per product and converted to the canonical schemas below. AE is extracted through the NASA SPDF OMNI product and retains WDC Kyoto as its original index attribution. The solar-wind table includes the historical interpolation described below. Sources are not averaged together. |
+| Dst | hourly | finite Kyoto value assigned to its UTC hour |
+| ap30 | half-hourly | linear ap30 becomes available at the end of its 30-minute interval |
+| AE | one minute | OMNI-derived AE archive; valid range \(0\leq AE<99999\) nT |
+| GSM Bz | one minute | selected OMNI column after offline interpolation |
+| solar-wind speed | one minute | selected OMNI column after offline interpolation |
+| proton density | one minute | selected OMNI column after offline interpolation |
+| F10.7 and Ap | daily and 3-hourly | values read from `SW-All.txt` |
+| F10, S10, M10, Y10 | daily | values read from `SOLFSMY.TXT` at the delays below |
+| F30 | daily | adjusted current-day value |
 
-Each product remains in its own file. The files are not row-wise merged into a
-single master table. `WeatherStore` performs the cross-product join at model
-runtime using UTC keys and the causal rules below.
+### OMNI solar-wind interpolation
 
-## Canonical locally assembled tables
+The historical OMNI files were concatenated in chronological one-minute order.
+For columns 5–13 of the selected OMNI table, the preparation script classified
+values greater than 999 as invalid and replaced them by one-dimensional linear
+interpolation in time. Linear extrapolation was used at the outer boundary.
+The three interpolated quantities that enter the model are GSM Bz,
+solar-wind speed, and proton density.
 
-All timestamps are UTC. Rows should be unique and chronological. A header is
-optional for AE; the safest form for the other files is numeric rows only.
+This interpolation belongs to the construction of the fixed research driver
+archive. The Java feature generator does not repeat it. It is also unrelated
+to the density target: satellite density observations remain uninterpolated.
 
-### Hourly Dst
+### AE provenance
 
-Recommended `DST.csv` schema:
+AE was obtained through NASA SPDF OMNI, which distributes the index produced
+by WDC Kyoto. Because final, provisional, and quick-look AE values may differ,
+one fixed AE archive is used throughout model-data construction.
 
-```text
-year,month,day,hour,minute,second,source_aux,dst_nT
-```
+## Temporal input construction
 
-The current research file uses hourly rows, zero minute and second, and the
-Kyoto Dst value in the final column. The auxiliary source field is retained
-from local preparation but is not an inference input. The loader also accepts an ISO-UTC
-timestamp followed by a final Dst value. It removes non-finite values and
-sentinels with absolute magnitude at least 9000 nT, then indexes the remaining
-value at the start of its UTC hour.
+For a requested time \(t\), the model histories are assembled as follows.
 
-### Minute AE
+| input | states | times relative to \(t\) |
+|---|---:|---|
+| short forcing history | 35 | \(t-170\) min to \(t\), every 5 min |
+| long AE/Dst history | 45 | \(t-48\) h to \(t-4\) h, every 1 h |
+| F10 history | 7 | D-1 through D-7 |
+| S10 history | 7 | D-1 through D-7 |
+| M10 history | 7 | D-2 through D-8 |
+| Y10 history | 7 | D-5 through D-11 |
 
-`AE.csv` schema:
+Each short-history state contains Dst, ap30, GSM Bz, solar-wind speed, proton
+density, and AE:
 
-```text
-year,day_of_year,hour,minute,AE_nT
-```
+- Dst is assigned from the corresponding hourly UTC bin.
+- ap30 is taken from the most recently completed half-hour interval.
+- AE and the three solar-wind variables use the most recent table entry at or
+  before the state time, with a maximum age of five minutes.
 
-Rows in the research snapshot are extracted from the AE field distributed by
-the NASA SPDF high-resolution OMNI product. OMNI obtains the index from WDC
-Kyoto; it does not independently calculate a second AE index. Local conversion
-does not add temporal averaging. The loader retains finite values in the range
-`0 <= AE < 99999` nT.
+The long history contains AE and Dst. AE follows the same five-minute lookup
+tolerance, while Dst retains its hourly value.
 
-AE release versions are material provenance. Depending on date, OMNI and WDC
-Kyoto may provide final, provisional, or quick-look values, and later revisions
-need not be numerically identical. The model-data assembly therefore uses one
-locally frozen OMNI-derived AE snapshot rather than mixing downloads or release
-versions.
+The two present solar-background inputs are previous-day observed F10.7 and
+current-day adjusted F30.
 
-### Minute solar wind
+## Empirical-model inputs
 
-`solarwind.csv` contains the high-resolution OMNI export in the selected-column
-order used by the research archive:
+JB2008 uses F10/F10B and S10/S10B at D-1, M10/M10B at D-2,
+Y10/Y10B at D-5, and the DTC value for the requested hour.
 
-```text
-year,day_of_year,hour,minute,omni_5,omni_6,omni_7,
-Bz_GSM_nT,speed_km_s,omni_10,omni_11,omni_12,proton_density_cm3
-```
+NRLMSISE-00 uses previous-day observed F10.7, a trailing 81-day F10.7 average,
+daily Ap, and the seven-element 3-hour Ap history. The trailing average is used
+instead of a centered average so that future solar-flux values are not needed.
 
-Only columns 8, 9, and 13 are model inputs. The intervening downloaded OMNI
-columns are retained to preserve the established column positions but are
-ignored by AETHER-P3. A row is rejected unless all three used values are
-finite and satisfy `abs(Bz) < 1000 nT`, `0 < speed < 5000 km/s`, and
-`0 <= proton density < 1000 cm^-3`.
+JB2008 and NRLMSISE-00 are evaluated at the requested time and location. Their
+two log-density estimates form the empirical-reference input group.
 
-Before export to the frozen research CSV, the source files were concatenated
-in chronological one-minute order. For every OMNI data column from column 5
-through column 13, the historical preparation script treated values greater
-than 999 as invalid and replaced them with one-dimensional linear interpolation
-over row time. Linear extrapolation was used at an outer boundary when needed.
-Consequently, the Bz, speed, and proton-density values consumed by the model
-can contain offline interpolated values. This operation was performed once
-when the frozen research driver archive was assembled; it is not performed by
-the Java feature generator at request time.
+## Missing data and causality
 
-This section records the procedure actually used for the released model. It
-should not be interpreted as a general recommendation to treat every physical
-value above 999 as invalid. In particular, a future operational preprocessing
-policy should use each OMNI field's documented fill value and should be
-validated before replacing the frozen research archive.
+The feature generator does not perform additional interpolation during a
+prediction request. If a required value cannot be obtained from the supplied
+tables under the temporal rules above, that input record is unavailable.
 
-### Half-hour ap30
+The lookup operation is causal with respect to the prepared tables: it never
+selects a table row later than the requested history time. The fixed OMNI
+solar-wind table nevertheless contains the offline interpolation described
+above. These are separate stages and should not be conflated when interpreting
+data latency.
 
-The established `Apo30.csv` layout is:
+Training and validation periods are separated by a 48-hour guard, equal to the
+longest input-memory window. This prevents a validation interval from entering
+the history of a training record.
 
-```text
-year,month,day,interval_start_hour,interval_aux_hour,
-source_time_1,source_time_2,Hp30,ap30,source_flag
-```
+## Local file schemas
 
-Only year, month, day, interval start, and ap30 are consumed. Decimal UTC hours
-are converted to hour and minute. The ap30 value becomes available to the
-model at `interval start + 30 minutes`, which prevents use before completion
-of its half-hour interval. The remaining GFZ fields are retained for source
-traceability but are not model inputs.
+The feature generator expects the following scientific columns:
 
-## Runtime temporal assembly
+| file | required columns |
+|---|---|
+| `AE.csv` | year, day of year, hour, minute, AE |
+| `solarwind.csv` | year, day of year, hour, minute, selected OMNI columns; Bz, speed, and proton density at columns 8, 9, and 13 |
+| `DST.csv` | UTC fields and Dst in the final column |
+| `Apo30.csv` | date, half-hour interval, and linear ap30 at column 9 |
 
-For a requested five-minute UTC, the Java feature generator constructs the
-driver portion of the input as follows.
-
-### Daily solar information
-
-- Previous-day observed F10.7 is read from `SW-All.txt`.
-- Current-day adjusted F30 is read from `radio_flux_adjusted.txt`.
-- Seven solar-history states are read from `SOLFSMY.TXT`: F10 and S10 use
-  lags D-1 through D-7, M10 uses D-2 through D-8, and Y10 uses D-5 through
-  D-11.
-- JB2008 uses F10/F10B and S10/S10B at D-1, M10/M10B at D-2, Y10/Y10B at
-  D-5, and the query-hour DTC value.
-- The causal NRLMSISE-00 anchor uses previous-day observed F10.7, the trailing
-  81-day observed F10.7 average, daily Ap, and the required three-hour Ap
-  history from `SW-All.txt`.
-
-### Fast forcing history
-
-Thirty-five states are assembled from 170 minutes before the query through the
-query time at five-minute spacing. At each state:
-
-- Dst uses the value indexed to the start of the corresponding UTC hour;
-- ap30 uses the most recently completed half-hour interval;
-- GSM Bz, solar-wind speed, proton density, and AE use the newest observation
-  at or before that state, with a maximum age of five minutes.
-
-### Long geomagnetic memory
-
-Forty-five hourly states cover query time minus 48 hours through query time
-minus 4 hours. Each state contains AE and Dst. AE retains the same five-minute
-maximum causal age; Dst uses its hourly UTC value.
-
-## Runtime missing values and interpolation boundary
-
-The Java production assembler does not perform additional linear
-interpolation, average across providers, or look forward beyond the values
-already present in a supplied local table. If a required daily value, hourly
-value, completed ap30 interval, or recent minute observation is unavailable in
-those tables, field generation fails with the missing UTC. This runtime rule
-does not undo or contradict the offline linear interpolation already embedded
-in the frozen `solarwind.csv` research product.
-
-Density labels follow a separate rule. Accelerometer-derived density
-observations are retained as observations and are not replaced by linearly
-interpolated density targets.
-
-## Reproduction boundary
-
-The repository specifies the accepted local schemas, source-variable choices,
-validity checks, units, and temporal join exactly. Provider download dates and
-local archive versions are not frozen in version 1.0.0. Operational source
-selection, publication latency, and automated acquisition are outside the
-scope of this research release.
+Daily solar products retain their provider formats. Installation paths and
+source links are listed in [Runtime data setup](RUNTIME_DATA_SETUP.md).

@@ -1,105 +1,71 @@
-# Data sources
+# Scientific data sources
 
-This document identifies the authoritative sources for the observations,
-drivers, empirical references, and auxiliary data used by AETHER-P3 Nowcast.
+AETHER-P3 Nowcast combines accelerometer-derived density observations,
+space-weather drivers, and two empirical thermosphere models. This document
+identifies the source and scientific role of each product.
 
 ## Neutral-density observations
 
-| mission | role | authoritative access |
+| mission | approximate coverage used in the research archive | source |
 |---|---|---|
-| Swarm-C | training and validation density labels | [ESA Swarm Level-2 daily DNS/ACC](https://swarm-diss.eo.esa.int/#swarm%2FLevel2daily%2FEntire_mission_data%2FDNS%2FACC) |
-| CHAMP | training and validation density labels | [ESA Swarm multi-mission CHAMP DNS](https://swarm-diss.eo.esa.int/#swarm%2FMultimission%2FCHAMP%2FDNS) |
-| GRACE-A | training and validation density labels | [ESA Swarm multi-mission GRACE Sat-1 DNS](https://swarm-diss.eo.esa.int/#swarm%2FMultimission%2FGRACE%2FDNS%2FSat_1) |
-| GRACE-FO Sat-1 | training and validation density labels | [ESA Swarm multi-mission GRACE-FO Sat-1 DNS](https://swarm-diss.eo.esa.int/#swarm%2FMultimission%2FGRACE-FO%2FDNS%2FSat_1) |
-| GOCE | training and validation density labels | [ESA GOCE Thermosphere Data, TDC_GOC_2](https://goce-ds.eo.esa.int/oads/access/collection/GOCE_Thermosphere_Data) |
+| CHAMP | 2000–2010 | [ESA multi-mission CHAMP DNS](https://swarm-diss.eo.esa.int/#swarm%2FMultimission%2FCHAMP%2FDNS) |
+| GRACE-A | 2002–2017 | [ESA multi-mission GRACE Sat-1 DNS](https://swarm-diss.eo.esa.int/#swarm%2FMultimission%2FGRACE%2FDNS%2FSat_1) |
+| GOCE | 2009–2013 | [ESA GOCE Thermosphere Data, TDC_GOC_2](https://goce-ds.eo.esa.int/oads/access/collection/GOCE_Thermosphere_Data) |
+| Swarm-C | 2014–2023 | [ESA Swarm Level-2 daily DNS/ACC](https://swarm-diss.eo.esa.int/#swarm%2FLevel2daily%2FEntire_mission_data%2FDNS%2FACC) |
+| GRACE-FO Sat-1 | 2018–2023 | [ESA multi-mission GRACE-FO Sat-1 DNS](https://swarm-diss.eo.esa.int/#swarm%2FMultimission%2FGRACE-FO%2FDNS%2FSat_1) |
 
-The ESA Swarm links use browser-side fragment routes and should be opened in a
-web browser.
+These densities are the supervised target. Valid observations are matched to
+the model time grid; density is not created by linear interpolation between
+satellite measurements.
 
-## Driver data sources used in the current research implementation
+## Solar and geomagnetic drivers
 
-Real-time data sources, publication latency, and update policies are
-deployment-specific and are not fixed by this research release.
-
-The files named below are obtained or prepared locally and are not
-redistributed by this repository. See
-[`RUNTIME_DATA_SETUP.md`](RUNTIME_DATA_SETUP.md) for installation details and
-[`DRIVER_PREPROCESSING.md`](DRIVER_PREPROCESSING.md) for the exact local
-schemas and temporal assembly rules.
-
-| local product | model variables | authoritative source |
+| model variable | local file | source |
 |---|---|---|
-| `solarwind.csv` | GSM Bz, solar-wind speed, and proton number density | [NASA SPDF OMNIWeb data documentation](https://omniweb.gsfc.nasa.gov/html/ow_data.html); use the high-resolution OMNI product |
-| `DST.csv` or `DST.txt` | hourly Dst | [WDC for Geomagnetism, Kyoto: hourly Dst data](https://wdc.kugi.kyoto-u.ac.jp/dstae/index.html) |
-| `AE.csv` or `AE.txt` | AE in the fast history and hourly AE in the long history | Acquired through the [NASA SPDF high-resolution OMNI product](https://omniweb.gsfc.nasa.gov/html/ow_data.html); the AE index distributed by OMNI originates from the [WDC for Geomagnetism, Kyoto](https://wdc.kugi.kyoto-u.ac.jp/aedir/) |
-| `Apo30.csv` | completed half-hour ap30 interval | [GFZ Hp30/Hp60 and linear ap30/ap60 data](https://kp.gfz.de/en/hp30-hp60) |
-| `SW-All.txt` | previous-day observed F10.7, trailing 81-day F10.7, daily Ap, and 3-hour Ap required by NRLMSISE-00 | [CelesTrak SW-All data](https://celestrak.org/SpaceData/SW-All.txt) and [format documentation](https://celestrak.org/SpaceData/SpaceWx-format.php) |
-| `SOLFSMY.TXT` | causal F10, S10, M10, and Y10 solar-proxy history; JB2008 inputs | [SET JB2008 current indices](https://sol.spacenvironment.net/JB2008/indices.html) |
-| `DTCFILE.TXT` | JB2008 geomagnetic storm correction | [SET JB2008 current indices](https://sol.spacenvironment.net/JB2008/indices.html) |
-| `radio_flux_adjusted.txt` | current-day F30 | [CLS Solar Radio Flux service](https://spaceweather.cls.fr/services/radioflux/) |
+| GSM Bz, solar-wind speed, proton density | `solarwind.csv` | [NASA SPDF high-resolution OMNI](https://omniweb.gsfc.nasa.gov/html/ow_data.html) |
+| AE | `AE.csv` | acquired through [NASA SPDF OMNI](https://omniweb.gsfc.nasa.gov/html/ow_data.html); the index originates from [WDC Kyoto](https://wdc.kugi.kyoto-u.ac.jp/aedir/) |
+| Dst | `DST.csv` | [WDC Kyoto](https://wdc.kugi.kyoto-u.ac.jp/dstae/index.html) |
+| ap30 | `Apo30.csv` | [GFZ Hp30/Hp60 and ap30/ap60](https://kp.gfz.de/en/hp30-hp60) |
+| observed F10.7 and Ap history | `SW-All.txt` | [CelesTrak space-weather data](https://celestrak.org/SpaceData/SW-All.txt) and [format description](https://celestrak.org/SpaceData/SpaceWx-format.php) |
+| F10, S10, M10, Y10 and their smoothed values | `SOLFSMY.TXT` | [Space Environment Technologies JB2008 indices](https://sol.spacenvironment.net/JB2008/indices.html) |
+| DTC storm correction | `DTCFILE.TXT` | [Space Environment Technologies JB2008 indices](https://sol.spacenvironment.net/JB2008/indices.html) |
+| adjusted F30 | `radio_flux_adjusted.txt` | [CLS solar radio flux service](https://spaceweather.cls.fr/services/radioflux/) |
 
-## Empirical references and auxiliary data
+AE distributed through OMNI is derived by WDC Kyoto rather than independently
+recomputed by OMNI. AE values may be released as final, provisional, or
+quick-look products. The model data therefore use one fixed AE archive so that
+training and inference refer to the same version.
 
-| component | role | authoritative source |
+The local OMNI solar-wind table is a preprocessed research product. Missing or
+flagged magnetic-field and plasma values were linearly interpolated during its
+construction. This driver interpolation is distinct from the density target,
+which is not interpolated.
+
+## Empirical density references
+
+JB2008 and NRLMSISE-00 are evaluated at the requested UTC, latitude,
+longitude, and altitude. Their log-density estimates are supplied to the
+neural network as physical reference states; neither model is treated as the
+observational target.
+
+| model | inputs used in the local calculation | reference |
 |---|---|---|
-| JB2008 | current-location empirical density input | [SET JB2008 indices and model resources](https://sol.spacenvironment.net/JB2008/indices.html) |
-| NRLMSISE-00 | current-location empirical density input | [Picone et al. (2002), NRLMSISE-00 model description](https://doi.org/10.1029/2002JA009430) |
-| Orekit data | Earth orientation, time scales, and reference-frame support | [Official Orekit 13.1.4 downloads and data instructions](https://www.orekit.org/site-orekit-13.1.4/downloads.html) |
+| JB2008 | F10/F10B and S10/S10B at D-1; M10/M10B at D-2; Y10/Y10B at D-5; hourly DTC | [Bowman et al. (2008)](https://doi.org/10.2514/6.2008-6438) |
+| NRLMSISE-00 | previous-day F10.7, trailing 81-day F10.7 average, daily Ap, and seven-element 3-hour Ap history | [Picone et al. (2002)](https://doi.org/10.1029/2002JA009430) |
 
-JB2008 and NRLMSISE-00 densities are evaluated locally through Orekit; they are
-not downloaded density grids.
+The NRLMSISE-00 reference uses a trailing rather than centered 81-day F10.7
+average so that the calculation does not require future solar-flux values.
+This is a causal nowcast adaptation of the usual retrospective input.
 
-### Orekit integration
+Both empirical models are evaluated locally using
+[Orekit 13.1.4](https://www.orekit.org/site-orekit-13.1.4/downloads.html).
+Orekit supplies time scales, Earth orientation, reference frames, geodetic
+coordinates, and the Sun position. Returned densities are converted to
+kg m\(^{-3}\) before their logarithms enter the neural network.
 
-The Java feature generator uses Orekit 13.1.4 and supplies model inputs through
-custom implementations of `JB2008InputParameters` and
-`NRLMSISE00InputParameters`.
+## Data availability
 
-- JB2008 receives F10/F10B and S10/S10B from `SOLFSMY.TXT` at D-1,
-  M10/M10B at D-2, Y10/Y10B at D-5, and the hourly DTC value from
-  `DTCFILE.TXT`.
-- NRLMSISE-00 receives previous-day observed F10.7, the causal trailing 81-day
-  observed F10.7 average, and its seven-element Ap history from `SW-All.txt`.
-  Switch 9 is set to -1 so that the complete 3-hour Ap history is used rather
-  than daily Ap alone.
-- UTC, WGS-84 geodetic position, the ITRF/IERS-2010 frame, and the Orekit Sun
-  position provider supply the time and geometry required by both models.
-- The returned densities are in kg m-3 and enter the neural-network feature
-  vector as `log10_JB2008_density` and `log10_NRLMSISE00_density`.
-
-Ap30, AE, the separate hourly Dst file, OMNI solar-wind variables, and F30 do
-not enter either Orekit empirical-model calculation. They are separate neural-
-network drivers. JB2008 uses DTC from `DTCFILE.TXT`; NRLMSISE-00 uses the Ap
-values in `SW-All.txt`.
-
-The research AE table is a frozen, locally retained snapshot extracted through
-OMNI. OMNI does not independently derive AE: it distributes values supplied by
-WDC Kyoto. Final, provisional, and quick-look AE releases can be revised or
-become available at different times, so a later download from either service
-is not assumed to be byte-for-byte identical to the snapshot used to assemble
-the model data.
-
-The frozen research solar-wind table is also a locally preprocessed product.
-Flagged or missing OMNI values in the magnetic-field and plasma columns were
-filled by linear interpolation during construction of that table. This driver
-preprocessing is distinct from the density-label policy: accelerometer-derived
-density observations were not linearly interpolated to create supervised
-targets.
-
-The trailing F10.7 average is a deliberate causal nowcast choice. The
-conventional retrospective NRLMSISE-00 specification uses a centered 81-day
-average, so the resulting anchor should be described as a causal
-NRLMSISE-00 implementation when exact retrospective reproducibility matters.
-
-For scientific attribution, cite the original JB2008 and NRLMSISE-00 model
-publications as well as the exact Orekit software release:
-
-- Bowman, B. R., et al. (2008), *A New Empirical Thermospheric Density Model
-  JB2008 Using New Solar and Geomagnetic Indices*, AIAA 2008-6438,
-  https://doi.org/10.2514/6.2008-6438.
-- Picone, J. M., Hedin, A. E., Drob, D. P., and Aikin, A. C. (2002),
-  *NRLMSISE-00 empirical model of the atmosphere: Statistical comparisons and
-  scientific issues*, https://doi.org/10.1029/2002JA009430.
-- Orekit 13.1.4,
-  https://www.orekit.org/site-orekit-13.1.4/downloads.html, with the deployed
-  version recorded explicitly.
+Third-party source files are not distributed with this repository. The
+required filenames and preparation instructions are listed in
+[Runtime data setup](RUNTIME_DATA_SETUP.md), and the temporal transformations
+are specified in [Driver preprocessing](DRIVER_PREPROCESSING.md).
