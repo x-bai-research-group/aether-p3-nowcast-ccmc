@@ -17,7 +17,7 @@ $$
 y=\frac{\log_{10}(\rho)-\mu_y}{\sigma_y},
 $$
 
-where $\rho$ is neutral mass density in $\mathrm{kg\,m^{-3}}$, and $\mu_y$ and
+where $\rho$ is neutral mass density in $\mathrm{kg\m^{-3}}$, and $\mu_y$ and
 $\sigma_y$ are calculated from the training data. A single neural-network
 evaluation returns the four normal-inverse-gamma parameters
 $(\gamma,\nu,\alpha,\beta)$. They define a central density estimate and a
